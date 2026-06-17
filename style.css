@@ -429,25 +429,31 @@ body {
 /* Large friendly exit/back button */
 .back-home-btn {
   width: 100%;
-  padding: 16px;
-  background: #3c4043;
-  color: #ffffff;
-  border: none;
+  padding: 15px;
+  background: #f1f3f4;
+  color: #5f6368;
+  border: 1.5px solid #e0e2e5;
   border-radius: 16px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-  transition: all 0.2s;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
 }
 
+.back-home-btn:hover {
+  background: #e8f0fe;
+  color: var(--blue-primary);
+  border-color: rgba(26, 115, 232, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(26, 115, 232, 0.08);
+}
+
 .back-home-btn:active {
-  background: #202124;
-  transform: scale(0.98);
+  transform: scale(0.97);
 }
 
 /* Feed widget */
