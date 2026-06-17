@@ -1,6 +1,6 @@
 export const translations = {
   en: {
-    appName: "JalRakshak Community",
+    appName: "JalRakshak",
     villageName: "Gopalpur Village",
     howIsWater: "How is your water today?",
     audioHelper: "Tap to listen to this page",
@@ -134,7 +134,7 @@ export const translations = {
     speakingText: "Speaking: "
   },
   hi: {
-    appName: "जलरक्षक कम्युनिटी",
+    appName: "जलरक्षक",
     villageName: "गोपालपुर गांव",
     howIsWater: "आज आपके यहाँ का पानी कैसा है?",
     audioHelper: "इस पेज को सुनने के लिए दबाएं",
@@ -260,7 +260,7 @@ export const translations = {
     speakingText: "आवाज: "
   },
   te: {
-    appName: "జలరక్షక్ కమ్యూనిటీ",
+    appName: "జలరక్షక్",
     villageName: "గోపాల్‌పూర్ గ్రామం",
     howIsWater: "ఈ రోజు మీ నీరు ఎలా ఉంది?",
     audioHelper: "ఈ పేజీని వినడానికి ఇక్కడ నొక్కండి",
