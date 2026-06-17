@@ -655,6 +655,41 @@ function getDistanceMeters(lat1, lon1, lat2, lon2) {
   return Math.round(R * c); // in meters
 }
 
+// Reverse geocode lat/lon to town/village/city name using free OSM Nominatim API
+async function reverseGeocode(lat, lon) {
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`, {
+      headers: {
+        'Accept-Language': appState.currentLanguage
+      }
+    });
+    if (!res.ok) throw new Error('Nominatim reverse geocode failed');
+    const data = await res.json();
+    const address = data.address || {};
+    
+    // Pick the most granular name available
+    const locationName = address.village || address.suburb || address.town || address.city || address.hamlet || address.neighbourhood || address.county || "Tirupati";
+    return locationName;
+  } catch (err) {
+    console.error('Error reverse geocoding coordinate:', err);
+    return null;
+  }
+}
+
+// Dynamically update the village name in translations dictionary and UI header
+function updateVillageName(locationName) {
+  // Update translation dictionaries
+  translations.en.villageName = `${locationName}`;
+  translations.hi.villageName = `${locationName}`;
+  translations.te.villageName = `${locationName}`;
+
+  // Find the header element and update it directly
+  const el = document.querySelector('[data-i18n="villageName"]');
+  if (el) {
+    el.textContent = locationName;
+  }
+}
+
 function setupMapScreen() {
   const villageCenter = [17.4483, 78.3488];
   
@@ -736,6 +771,13 @@ function setupMapScreen() {
         }).addTo(map);
 
         initializeMarkersWithCenter(userCoords);
+
+        // Fetch location name and update village indicator header dynamically
+        reverseGeocode(position.coords.latitude, position.coords.longitude).then(locationName => {
+          if (locationName) {
+            updateVillageName(locationName);
+          }
+        });
       },
       (error) => {
         console.warn("Geolocation permission denied or failed, using village center fallback:", error);
