@@ -1198,10 +1198,28 @@ function renderStory() {
   
   // Reset audio button state on render
   dom.storyAudioBtn.classList.remove('playing');
-  
-  // Render high-quality generated village illustration
-  dom.storyArt.innerHTML = `<img src="./story${appState.currentStoryIndex + 1}.png" class="story-art-img" alt="${activeStory.title}">`;
-
+  // Render high-quality generated village illustration or video
+  const storyIndex = appState.currentStoryIndex + 1;
+  if (storyIndex === 1 || storyIndex === 2) {
+    dom.storyArt.innerHTML = `
+      <video id="story-video-${storyIndex}" class="story-art-video" src="./story${storyIndex}.mp4" muted playsinline controls></video>
+    `;
+    const videoEl = document.getElementById(`story-video-${storyIndex}`);
+    if (videoEl) {
+      videoEl.addEventListener('play', () => {
+        if (!window.speechSynthesis || !window.speechSynthesis.speaking) {
+          dom.storyAudioBtn.classList.add('playing');
+          speakText(activeStory.text);
+        }
+      });
+      videoEl.addEventListener('pause', () => {
+        stopTTS();
+        dom.storyAudioBtn.classList.remove('playing');
+      });
+    }
+  } else {
+    dom.storyArt.innerHTML = `<img src="./story${storyIndex}.png" class="story-art-img" alt="${activeStory.title}">`;
+  }
   // Render or update the Watch Video button
   let ytBtn = document.getElementById('story-yt-btn');
   if (!ytBtn) {
