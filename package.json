@@ -1,0 +1,13 @@
+{
+  "name": "jalrakshak-community",
+  "version": "1.0.0",
+  "description": "JalRakshak Community water safety awareness prototype",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.2.0"
+  }
+}

@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JalRakshak Community - Water Safety Awareness Platform</title>
+  <meta name="description" content="A visual-first, multilingual, voice-synthesized water safety prototype designed for rural communities.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Presentation Demo Controls (Floating on Desktop, Hidden on Mobile) -->
+  <div class="demo-tools">
+    <h3 data-i18n="appName">JalRakshak Community</h3>
+    <p style="font-size: 11px; color: #666; margin-bottom: 6px;">Quick Presentation Controls:</p>
+    <button class="demo-tool-btn" onclick="demoSetStatus('safe')">🟢 Reset to Normal (Safe)</button>
+    <button class="demo-tool-btn" onclick="demoSetStatus('careful')">🟡 Force Warning (Careful)</button>
+    <button class="demo-tool-btn" onclick="demoSetStatus('risk')">🔴 Force Alert (High Risk)</button>
+    
+    <div style="margin-top: 14px; font-size: 11px; line-height: 1.4; color: #555; background: #f9f9f9; padding: 8px; border-radius: 8px;">
+      💡 <strong>Tip:</strong> Click the 🔊 speaker button at the top right of the app to hear any screen read aloud in English, Hindi, or Telugu.
+    </div>
+  </div>
+
+  <!-- Main Mobile Emulator Container -->
+  <div class="app-container" id="app-root-container">
+    
+    <!-- Phone Top Status Bar -->
+    <div class="status-bar">
+      <span>21:35</span>
+      <div class="status-bar-notch"></div>
+      <div style="display: flex; gap: 6px; align-items: center;">
+        <span>📶</span>
+        <span>🔋 92%</span>
+      </div>
+    </div>
+
+    <!-- App Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <h1 class="app-title"><span style="font-size: 24px;">⛲</span> <span data-i18n="appName">JalRakshak</span></h1>
+        <div class="village-indicator">
+          <span>📍</span>
+          <span data-i18n="villageName">Gopalpur Village</span>
+        </div>
+      </div>
+      
+      <!-- Actions: Language & Audio Reader -->
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div class="language-switcher">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="hi">हिंदी</button>
+          <button class="lang-btn" data-lang="te">తెలుగు</button>
+        </div>
+        
+        <button class="audio-helper-btn" id="audio-helper" title="Read Aloud" aria-label="Read Page Out Loud">
+          <span style="font-size: 20px;">🔊</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Interactive Screens Viewport -->
+    <main class="screens-viewport" id="screens-viewport">
+
+      <!-- ==================== SCREEN 1: COMMUNITY HOME SCREEN (HUB) ==================== -->
+      <section class="screen" id="home-screen">
+        <h2 class="section-title" data-i18n="howIsWater">How is your water today?</h2>
+        
+        <!-- Live Status Info Card -->
+        <div class="status-indicator-card" id="home-status-card" onclick="navigateTo('warning')" style="cursor: pointer;">
+          <div class="status-text-area">
+            <h3 data-i18n="lastReport">Last Report</h3>
+            <p id="home-status-text" data-i18n="normalStatus">Water quality appears stable based on community feedback.</p>
+          </div>
+          <span class="status-badge" id="home-status-badge" data-i18n="looksSafe">Looks Safe</span>
+        </div>
+
+        <!-- Hub and Spoke Navigation Menu Grid -->
+        <h3 style="font-size: 14px; font-weight: 700; color: #5f6368; text-transform: uppercase; margin: 18px 0 10px 0;">Community Tools</h3>
+        
+        <div class="home-menu-grid">
+          <!-- Spoke 1: Report Problem -->
+          <div class="menu-shortcut-card report" onclick="navigateTo('report')">
+            <div class="shortcut-icon">📢</div>
+            <div class="shortcut-label" data-i18n="menuReport">Report Problem</div>
+          </div>
+
+          <!-- Spoke 2: Water Map -->
+          <div class="menu-shortcut-card map" onclick="navigateTo('map')">
+            <div class="shortcut-icon">🗺️</div>
+            <div class="shortcut-label" data-i18n="menuMap">See Water Map</div>
+          </div>
+
+          <!-- Spoke 3: Safe Water Finder -->
+          <div class="menu-shortcut-card finder" onclick="navigateTo('finder')">
+            <div class="shortcut-icon">🔍</div>
+            <div class="shortcut-label" data-i18n="menuFinder">Find Safe Water</div>
+          </div>
+
+          <!-- Spoke 4: Voice Assistant -->
+          <div class="menu-shortcut-card voice" onclick="navigateTo('voice')">
+            <div class="shortcut-icon">🎙️</div>
+            <div class="shortcut-label" data-i18n="menuVoice">JalRakshak Voice</div>
+          </div>
+
+          <!-- Spoke 5: Quality Ratings -->
+          <div class="menu-shortcut-card reputation" onclick="navigateTo('reputation')">
+            <div class="shortcut-icon">⭐</div>
+            <div class="shortcut-label" data-i18n="menuReputation">Water Ratings</div>
+          </div>
+
+          <!-- Spoke 6: Awareness Stories -->
+          <div class="menu-shortcut-card stories" onclick="navigateTo('stories')">
+            <div class="shortcut-icon">📚</div>
+            <div class="shortcut-label" data-i18n="menuStories">Safety Stories</div>
+          </div>
+
+          <!-- Spoke 7: Hygiene Guide -->
+          <div class="menu-shortcut-card hygiene" onclick="navigateTo('warning')">
+            <div class="shortcut-icon">♨️</div>
+            <div class="shortcut-label" data-i18n="healthWarningTitle">Safety Guidance</div>
+          </div>
+
+          <!-- Spoke 8: ASHA Dashboard -->
+          <div class="menu-shortcut-card asha" onclick="navigateTo('asha')">
+            <div class="shortcut-icon">👩‍⚕️</div>
+            <div class="shortcut-label" data-i18n="menuAsha">ASHA Dashboard</div>
+          </div>
+        </div>
+
+        <!-- Recent Status Log Feed -->
+        <div class="community-feed" style="margin-top: 20px;">
+          <div class="feed-header">
+            <span data-i18n="lastReport">Last Community Reports</span>
+            <span>ℹ️</span>
+          </div>
+          <div id="home-feed-list">
+            <!-- Rendered Dynamically in app.js -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SCREEN 2: REPORT WATER PROBLEM ==================== -->
+      <section class="screen" id="report-screen">
+        <h2 class="section-title" data-i18n="reportTitle">Report Water Problem</h2>
+        <p class="section-subtitle" data-i18n="oneTapReport">Select what is wrong with the water:</p>
+        
+        <!-- Problem Selection Grid -->
+        <div class="report-grid" id="report-grid-options">
+          <!-- Rendered dynamically with big touch target buttons in app.js -->
+        </div>
+
+        <button class="submit-btn" id="submit-report-btn" style="margin-bottom: 16px;">
+          <span>📤</span>
+          <span data-i18n="submitReport">Send Report</span>
+        </button>
+
+        <!-- Exit back to Hub -->
+        <button class="back-home-btn" data-i18n="goBackHome" onclick="navigateTo('home')">🏠 Go Back to Home Screen</button>
+
+        <!-- Submission Success Modal -->
+        <div class="toast-success" id="success-toast">
+          <div class="toast-icon">✅</div>
+          <div class="toast-title" data-i18n="reportSuccess">Thank you!</div>
+          <p class="toast-desc">Your report protects our village.</p>
+        </div>
+      </section>
+
+      <!-- ==================== SCREEN 3: VILLAGE WATER MAP ==================== -->
+      <section class="screen" id="map-screen">
+        <h2 class="section-title" data-i18n="mapTitle">Village Water Map</h2>
+        <p class="section-subtitle" data-i18n="mapSub">Tap any water point to check safety:</p>
+
+        <!-- Simulated Map Grid -->
+        <div class="map-canvas">
+          <div class="map-river"></div>
+          <div class="map-path map-path-1"></div>
+          <div class="map-path map-path-2"></div>
+          
+          <!-- RO Plant Marker -->
+          <div class="map-marker safe" style="top: 25%; left: 68%;" data-source="ro" id="marker-ro">
+            🧪
+            <span class="map-marker-label" data-i18n="panchayatRO">Panchayat RO Plant</span>
+          </div>
+          
+          <!-- Water Tank Marker -->
+          <div class="map-marker safe" style="top: 15%; left: 15%;" data-source="tank" id="marker-tank">
+            🚰
+            <span class="map-marker-label" data-i18n="villageTank">Main Tank</span>
+          </div>
+
+          <!-- School Pump Marker -->
+          <div class="map-marker careful" style="top: 60%; left: 20%;" data-source="school" id="marker-school">
+            💧
+            <span class="map-marker-label" data-i18n="schoolPump">School Pump</span>
+          </div>
+
+          <!-- Temple Well Marker -->
+          <div class="map-marker risk" style="top: 70%; left: 75%;" data-source="temple" id="marker-temple">
+            🕳️
+            <span class="map-marker-label" data-i18n="templeWell">Temple Well</span>
+          </div>
+        </div>
+
+        <!-- Marker Detail Summary Card -->
+        <div class="source-detail-card" id="map-detail-card" style="margin-bottom: 16px;">
+          <div class="source-detail-header">
+            <span class="source-detail-name" id="detail-name">-</span>
+            <span class="status-badge" id="detail-status">-</span>
+          </div>
+          
+          <div style="margin: 8px 0; display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 13px; color: #5f6368;" data-i18n="trustScore">Trust Score:</span>
+            <span class="stars-row" id="detail-trust"></span>
+          </div>
+
+          <div style="font-size: 13px; color: #3c4043; border-top: 1px solid #f1f3f4; padding-top: 8px; margin-top: 8px;">
+            <strong data-i18n="recentComplaints">Recent Complaints:</strong>
+            <ul id="detail-complaints" style="margin-left: 18px; margin-top: 4px;"></ul>
+          </div>
+        </div>
+
+        <!-- Exit back to Hub -->
+        <button class="back-home-btn" data-i18n="goBackHome" onclick="navigateTo('home')">🏠 Go Back to Home Screen</button>
+      </section>
+
+      <!-- ==================== SCREEN 4: SAFE WATER FINDER ==================== -->
+      <section class="screen" id="finder-screen">
+        <h2 class="section-title" data-i18n="finderTitle">Safe Water Finder</h2>
+        <p class="section-subtitle" data-i18n="needSafeWater">Need safe drinking water?</p>
+        
+        <h3 style="font-size: 14px; color: #5f6368; font-weight: 700; margin-bottom: 12px;" data-i18n="nearestClean">Nearest Clean Sources:</h3>
+        
+        <!-- Clean Water Proximity List -->
+        <div class="finder-list" id="finder-items-list" style="margin-bottom: 20px;">
+          <!-- Rendered in app.js -->
+        </div>
+
+        <!-- Exit back to Hub -->
+        <button class="back-home-btn" data-i18n="goBackHome" onclick="navigateTo('home')">🏠 Go Back to Home Screen</button>
+
+        <!-- Walking Directions Simulation overlay -->
+        <div class="directions-overlay" id="directions-overlay">
+          <div class="directions-popup">
+            <h3 id="directions-title" data-i18n="simulatingDirections">Showing route to source...</h3>
+            
+            <!-- Walking Visual Progress bar -->
+            <div class="direction-line">
+              <div class="direction-progress" id="directions-progress"></div>
+            </div>
+            
+            <div style="font-size: 48px; margin-bottom: 16px;">🚶‍♂️... ⛲</div>
+            <button class="submit-btn" id="directions-close" data-i18n="home">OK / Go Back</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SCREEN 5: HEALTH WARNING SCREEN ==================== -->
+      <section class="screen" id="warning-screen">
+        <h2 class="section-title" data-i18n="healthWarningTitle">Safety Guidance</h2>
+        <div class="status-indicator-card risk" style="margin-bottom: 20px;">
+          <div style="font-size: 32px; margin-right: 12px;">⚠️</div>
+          <div>
+            <h3 style="font-weight: 700; color: var(--red-danger);" data-i18n="complaintsIncreasing">Water complaints are increasing!</h3>
+            <p style="font-size: 13px; color: #555; margin-top: 4px;">Please follow these steps for clean water:</p>
+          </div>
+        </div>
+
+        <!-- Simple Visual Instruction cards -->
+        <div class="guidance-container" style="margin-bottom: 20px;">
+          <div class="guidance-card boil">
+            <span class="guidance-icon">♨️</span>
+            <span class="guidance-text" data-i18n="guidanceBoil">Boil water for 10 minutes</span>
+          </div>
+
+          <div class="guidance-card filter">
+            <span class="guidance-icon">🧪</span>
+            <span class="guidance-text" data-i18n="guidanceFilter">Use clean filters or chlorine drops</span>
+          </div>
+
+          <div class="guidance-card avoid">
+            <span class="guidance-icon">❌</span>
+            <span class="guidance-text" data-i18n="guidanceAvoid">Avoid using market handpump for now</span>
+          </div>
+        </div>
+
+        <!-- Exit back to Hub -->
+        <button class="back-home-btn" data-i18n="goBackHome" onclick="navigateTo('home')">🏠 Go Back to Home Screen</button>
+      </section>
+
+      <!-- ==================== SCREEN 6: ASHA WORKER DASHBOARD ==================== -->
+      <section class="screen" id="asha-screen">
+        <h2 class="section-title" data-i18n="ashaTitle">ASHA Health Portal</h2>
+        
+        <!-- Sickness tracker metrics -->
+        <div class="asha-cases-panel">
+          <h3 style="font-size: 14px; color: #80868b; text-transform: uppercase; margin-bottom: 10px;" data-i18n="villageRiskStatus">Village Sickness Risk Level</h3>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span id="asha-risk-label" style="font-weight: 700; font-size: 18px; color: var(--green-safe);">Low Risk</span>
+            <span>🤒</span>
+          </div>
+          <div class="risk-level-bar">
+            <div class="risk-level-progress" id="asha-risk-bar"></div>
+          </div>
+        </div>
+
+        <p class="section-subtitle" data-i18n="reportSickness">Report new sickness cases in village:</p>
+
+        <!-- Sickness quick buttons -->
+        <div class="asha-sickness-grid" style="margin-bottom: 20px;">
+          
+          <!-- Diarrhea -->
+          <div class="asha-sickness-card">
+            <div class="asha-sickness-info">
+              <h4 data-i18n="diarrhea">Diarrhea</h4>
+              <p data-i18n="casesLogged">Logged today</p>
+            </div>
+            <div class="asha-counter-controls">
+              <button class="asha-btn-count minus" data-type="diarrhea" aria-label="Decrease Diarrhea">-</button>
+              <span class="asha-val" id="asha-diarrhea-val">0</span>
+              <button class="asha-btn-count plus" data-type="diarrhea" aria-label="Increase Diarrhea">+</button>
+            </div>
+          </div>
+
+          <!-- Vomiting -->
+          <div class="asha-sickness-card">
+            <div class="asha-sickness-info">
+              <h4 data-i18n="vomiting">Vomiting</h4>
+              <p data-i18n="casesLogged">Logged today</p>
+            </div>
+            <div class="asha-counter-controls">
+              <button class="asha-btn-count minus" data-type="vomiting" aria-label="Decrease Vomiting">-</button>
+              <span class="asha-val" id="asha-vomiting-val">0</span>
+              <button class="asha-btn-count plus" data-type="vomiting" aria-label="Increase Vomiting">+</button>
+            </div>
+          </div>
+
+          <!-- Fever -->
+          <div class="asha-sickness-card">
+            <div class="asha-sickness-info">
+              <h4 data-i18n="fever">Fever / Stomach Ache</h4>
+              <p data-i18n="casesLogged">Logged today</p>
+            </div>
+            <div class="asha-counter-controls">
+              <button class="asha-btn-count minus" data-type="fever" aria-label="Decrease Fever">-</button>
+              <span class="asha-val" id="asha-fever-val">0</span>
+              <button class="asha-btn-count plus" data-type="fever" aria-label="Increase Fever">+</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Exit back to Hub -->
+        <button class="back-home-btn" data-i18n="goBackHome" onclick="navigateTo('home')">🏠 Go Back to Home Screen</button>
+      </section>
+
+      <!-- ==================== SCREEN 7: WATER REPUTATION ==================== -->
+      <section class="screen" id="reputation-screen">
+        <h2 class="section-title" data-i18n="reputationTitle">Water Trust Scores</h2>
+        <p class="section-subtitle" data-i18n="sourceTrust">Source Reputation based on tests & complaints:</p>
+
+        <!-- Source reputation rating cards -->
+        <div class="reputation-list" id="reputation-items-list" style="margin-bottom: 20px;">
+          <!-- Rendered in app.js -->
+        </div>
+
+        <!-- Exit back to Hub -->
+        <button class="back-home-btn" data-i18n="goBackHome" onclick="navigateTo('home')">🏠 Go Back to Home Screen</button>
+      </section>
+
+      <!-- ==================== SCREEN 8: AWARENESS STORIES ==================== -->
+      <section class="screen" id="stories-screen">
+        <h2 class="section-title" data-i18n="storiesTitle">Water Safety Stories</h2>
+        
+        <!-- Carousel card -->
+        <div class="story-container" style="margin-bottom: 20px;">
+          <div>
+            <div class="story-header" id="story-card-title">-</div>
+            
+            <!-- Graphic Comic Artwork Simulation -->
+            <div class="story-art" id="story-card-art">
+              <!-- Rendered dynamically with emojis -->
+            </div>
+            
+            <p class="story-text" id="story-card-text">-</p>
+          </div>
+
+          <div class="story-nav">
+            <button class="story-nav-btn" id="story-prev" data-i18n="prevStory">Previous</button>
+            <button class="story-nav-btn primary" id="story-next" data-i18n="nextStory">Next</button>
+          </div>
+        </div>
+
+        <!-- Exit back to Hub -->
+        <button class="back-home-btn" data-i18n="goBackHome" onclick="navigateTo('home')">🏠 Go Back to Home Screen</button>
+      </section>
+
+      <!-- ==================== SCREEN 9: VOICE ASSISTANT ==================== -->
+      <section class="screen" id="voice-screen">
+        <h2 class="section-title" data-i18n="voiceTitle">JalRakshak Voice</h2>
+        <p class="section-subtitle" data-i18n="voiceInstruction">Tap microphone and speak, or tap a question below:</p>
+
+        <!-- Conversational chat box view -->
+        <div class="voice-chat-box" id="voice-chat-box">
+          <div class="chat-bubble bot">
+            <span>👋 Namaste! I am JalRakshak. How can I help you today?</span>
+          </div>
+        </div>
+
+        <!-- Interactive Question Tags -->
+        <div class="voice-suggestions" id="voice-suggestions-list">
+          <!-- Rendered in app.js -->
+        </div>
+
+        <!-- Glowing Microphone Trigger Area -->
+        <div class="voice-mic-area" style="margin-bottom: 24px;">
+          <button class="mic-btn" id="mic-button" aria-label="Microphone">🎙️</button>
+          
+          <!-- Speech output waveform indicator -->
+          <div class="audio-wave" id="audio-wave">
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+          </div>
+        </div>
+
+        <!-- Exit back to Hub -->
+        <button class="back-home-btn" data-i18n="goBackHome" onclick="navigateTo('home')">🏠 Go Back to Home Screen</button>
+      </section>
+
+    </main>
+
+    <!-- ==================== SCREEN 10: EMERGENCY COMMUNITY ALERT (Overlay) ==================== -->
+    <div class="emergency-alert-overlay" id="emergency-alert">
+      <div class="emergency-header">
+        <div class="emergency-icon">🚨</div>
+        <h2 class="emergency-alert-title" data-i18n="emergencyTitle">EMERGENCY ALERT</h2>
+        <h3 style="font-weight: 700; color: #ffeb3b; font-size: 20px;" data-i18n="emergencyWarning">MULTIPLE COMPLAINTS RECEIVED</h3>
+        <p class="emergency-desc" data-i18n="emergencyDesc">Water in the village contains high risk. Do not drink tap water directly.</p>
+      </div>
+
+      <div style="font-size: 80px; margin: 24px 0;">🚱☠️🏥</div>
+
+      <div class="emergency-actions">
+        <button class="emergency-primary-btn" id="emergency-finder-btn" data-i18n="findSafeWaterBtn">Find Safe Water Now</button>
+        <button class="emergency-secondary-btn" id="emergency-close" data-i18n="closeAlert">Dismiss Alert</button>
+      </div>
+    </div>
+
+    <!-- Active Text Speech readout UI feedback banner -->
+    <div class="audio-feedback-banner" id="audio-feedback-banner">
+      <span style="font-size: 16px;">🔊</span>
+      <span class="audio-feedback-text" id="audio-feedback-text">Speaking page...</span>
+      <button class="audio-stop-btn" id="audio-stop-btn">STOP</button>
+    </div>
+
+  </div>
+
+  <!-- JavaScript load order -->
+  <script src="translations.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
