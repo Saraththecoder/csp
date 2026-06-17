@@ -1110,8 +1110,8 @@ function renderStory() {
   dom.storyTitle.textContent = activeStory.title;
   dom.storyText.textContent = activeStory.text;
   
-  // Dynamic large illustration simulation (using emojis & colors)
-  dom.storyArt.innerHTML = `<span style="font-size: 80px;">${activeStory.emoji}</span>`;
+  // Render high-quality generated village illustration
+  dom.storyArt.innerHTML = `<img src="./story${appState.currentStoryIndex + 1}.png" class="story-art-img" alt="${activeStory.title}">`;
   
   // Enable/disable buttons
   dom.storyPrevBtn.style.visibility = appState.currentStoryIndex === 0 ? 'hidden' : 'visible';
