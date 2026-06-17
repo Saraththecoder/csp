@@ -9,8 +9,8 @@
   <!-- Leaflet Map CDNs -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script type="module" crossorigin src="./assets/index-CW6-RM9u.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-CBW8ReC4.css">
+  <script type="module" crossorigin src="./assets/index-3JkcoBd-.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-Cq4TCwPG.css">
 </head>
 <body>
 
@@ -428,38 +428,37 @@
       </section>
 
       <!-- ==================== SCREEN 9: VOICE ASSISTANT ==================== -->
-      <section class="screen" id="voice-screen">
-        <h2 class="section-title" data-i18n="voiceTitle">JalRakshak Voice</h2>
-        
-        <!-- Bot Avatar Area -->
-        <div class="bot-avatar-wrapper">
-          <div class="bot-avatar-container" id="bot-avatar-container">
+      <section class="screen voice-screen-redesigned" id="voice-screen">
+
+        <!-- Hero Avatar Panel -->
+        <div class="voice-hero-panel">
+          <!-- Concentric static ring layers -->
+          <div class="voice-ring voice-ring-outer"></div>
+          <div class="voice-ring voice-ring-mid"></div>
+          <div class="voice-ring voice-ring-inner"></div>
+
+          <!-- Bot image container (animated when responding) -->
+          <div class="voice-bot-container" id="bot-avatar-container">
+            <!-- 3 pulsing ripple rings -->
             <div class="bot-wave-ring ring1"></div>
             <div class="bot-wave-ring ring2"></div>
             <div class="bot-wave-ring ring3"></div>
-            <img src="./assets/bot-DIebCs9U.png" alt="JalRakshak Bot" class="bot-avatar-img" id="bot-avatar">
+            <img src="./assets/bot-DIebCs9U.png" alt="JalRakshak Bot" class="voice-bot-img" id="bot-avatar">
           </div>
         </div>
 
-        <p class="section-subtitle" data-i18n="voiceInstruction">Tap microphone and speak, or tap a question below:</p>
-
-        <!-- Conversational chat box view -->
-        <div class="voice-chat-box" id="voice-chat-box">
-          <div class="chat-bubble bot">
-            <span>👋 Namaste! I am JalRakshak. How can I help you today?</span>
-          </div>
+        <!-- Greeting speech bubble -->
+        <div class="voice-greeting-bubble" id="voice-greeting-bubble">
+          <span data-i18n="voiceGreeting">👋 Namaste! I am JalRakshak. How can I help you today?</span>
         </div>
 
-        <!-- Interactive Question Tags -->
-        <div class="voice-suggestions" id="voice-suggestions-list">
+        <!-- Suggestion Chips (horizontal scroll) -->
+        <div class="voice-suggestions-row" id="voice-suggestions-list">
           <!-- Rendered in app.js -->
         </div>
 
-        <!-- Glowing Microphone Trigger Area -->
-        <div class="voice-mic-area" style="margin-bottom: 24px;">
-          <button class="mic-btn" id="mic-button" aria-label="Microphone">🎙️</button>
-          
-          <!-- Speech output waveform indicator -->
+        <!-- Bottom Mic + Waveform area -->
+        <div class="voice-bottom-area">
           <div class="audio-wave" id="audio-wave">
             <div class="wave-bar"></div>
             <div class="wave-bar"></div>
@@ -467,10 +466,19 @@
             <div class="wave-bar"></div>
             <div class="wave-bar"></div>
           </div>
+          <button class="voice-mic-large" id="mic-button" aria-label="Microphone">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+              <line x1="12" y1="19" x2="12" y2="23"/>
+              <line x1="8" y1="23" x2="16" y2="23"/>
+            </svg>
+          </button>
+          <p class="voice-tap-label" data-i18n="voiceInstruction">Tap to speak</p>
         </div>
 
         <!-- Exit back to Hub -->
-        <button class="back-home-btn" data-i18n="goBackHome" onclick="navigateTo('home')">🏠 Go Back to Home Screen</button>
+        <button class="back-home-btn" data-i18n="goBackHome" onclick="navigateTo('home')" style="margin-top:12px;">🏠 Go Back to Home Screen</button>
       </section>
 
     </main>
