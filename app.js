@@ -740,6 +740,41 @@ const storiesData = [
     titleKey: 'story3Title',
     textKey: 'story3Text',
     emoji: '🥛🧺🪰'
+  },
+  {
+    titleKey: 'story4Title',
+    textKey: 'story4Text',
+    emoji: '🧼🤕☠️'
+  },
+  {
+    titleKey: 'story5Title',
+    textKey: 'story5Text',
+    emoji: '🚽🚯🕳️'
+  },
+  {
+    titleKey: 'story6Title',
+    textKey: 'story6Text',
+    emoji: '🧼🙌🚰'
+  },
+  {
+    titleKey: 'story7Title',
+    textKey: 'story7Text',
+    emoji: '🏺🧼🧽'
+  },
+  {
+    titleKey: 'story8Title',
+    textKey: 'story8Text',
+    emoji: '🧪💦🛡️'
+  },
+  {
+    titleKey: 'story9Title',
+    textKey: 'story9Text',
+    emoji: '🥛🧪🧒'
+  },
+  {
+    titleKey: 'story10Title',
+    textKey: 'story10Text',
+    emoji: '📢👩‍⚕️🏡'
   }
 ];
 
