@@ -50,7 +50,7 @@ const dom = {
   successToast: document.getElementById('success-toast'),
   
   // Map Screen
-  mapMarkers: document.querySelectorAll('.map-marker'),
+  mapMarkers: null,
   detailCard: document.getElementById('map-detail-card'),
   detailName: document.getElementById('detail-name'),
   detailStatus: document.getElementById('detail-status'),
@@ -110,8 +110,122 @@ const langFonts = {
   te: "var(--font-te)"
 };
 
+// Helper: Merge API state into appState
+function mergeState(apiData) {
+  if (!apiData) return;
+  appState.globalWaterStatus = apiData.globalWaterStatus;
+  appState.sicknessCases = apiData.sicknessCases;
+  
+  if (apiData.sources) {
+    Object.keys(apiData.sources).forEach(key => {
+      if (appState.sources[key]) {
+        appState.sources[key].status = apiData.sources[key].status;
+        appState.sources[key].trust = apiData.sources[key].trust;
+        appState.sources[key].complaints = apiData.sources[key].complaints;
+      }
+    });
+  }
+}
+
+// API: Fetch state from backend
+async function fetchState() {
+  try {
+    const res = await fetch('/api/data');
+    if (!res.ok) throw new Error('Failed to fetch state');
+    const apiData = await res.json();
+    mergeState(apiData);
+  } catch (err) {
+    console.error('Error fetching state:', err);
+  }
+}
+
+// API: Send report action to backend
+async function sendReportAction(problems, targetSource) {
+  try {
+    const res = await fetch('/api/action', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        action: 'report',
+        payload: { problems, targetSource }
+      })
+    });
+    if (!res.ok) throw new Error('Report submission failed');
+    const data = await res.json();
+    mergeState(data.state);
+  } catch (err) {
+    console.error('Error submitting report:', err);
+  }
+}
+
+// API: Send sickness log action to backend
+async function sendSicknessAction(type, count) {
+  try {
+    const res = await fetch('/api/action', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        action: 'sickness',
+        payload: { type, count }
+      })
+    });
+    if (!res.ok) throw new Error('Sickness log failed');
+    const data = await res.json();
+    mergeState(data.state);
+  } catch (err) {
+    console.error('Error logging sickness case:', err);
+  }
+}
+
+// API: Reset database state on backend
+async function resetAPIState() {
+  try {
+    const res = await fetch('/api/action', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ action: 'reset' })
+    });
+    if (!res.ok) throw new Error('Reset failed');
+    const data = await res.json();
+    mergeState(data.state);
+  } catch (err) {
+    console.error('Error resetting state:', err);
+  }
+}
+
+// Helper: update ASHA UI counter values
+function updateAshaScreenVals() {
+  if (dom.ashaDiarrheaVal) dom.ashaDiarrheaVal.textContent = appState.sicknessCases.diarrhea;
+  if (dom.ashaVomitingVal) dom.ashaVomitingVal.textContent = appState.sicknessCases.vomiting;
+  if (dom.ashaFeverVal) dom.ashaFeverVal.textContent = appState.sicknessCases.fever;
+  
+  const total = appState.sicknessCases.diarrhea + appState.sicknessCases.vomiting + appState.sicknessCases.fever;
+  const dict = translations[appState.currentLanguage];
+  let riskPercentage = Math.min(100, (total / 10) * 100);
+  if (dom.ashaRiskBar) dom.ashaRiskBar.style.width = `${riskPercentage}%`;
+
+  if (dom.ashaRiskLabel) {
+    if (total <= 2) {
+      if (dom.ashaRiskBar) dom.ashaRiskBar.style.background = 'var(--green-safe)';
+      dom.ashaRiskLabel.textContent = `${dict.low || 'Low'} (${total} cases)`;
+    } else if (total <= 5) {
+      if (dom.ashaRiskBar) dom.ashaRiskBar.style.background = 'var(--orange-warning)';
+      dom.ashaRiskLabel.textContent = `${dict.medium || 'Medium'} (${total} cases)`;
+    } else {
+      if (dom.ashaRiskBar) dom.ashaRiskBar.style.background = 'var(--red-danger)';
+      dom.ashaRiskLabel.textContent = `${dict.high || 'High'} (${total} cases)`;
+    }
+  }
+}
+
 // App Initialization
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
   setupLanguageSwitcher();
   setupReportScreen();
   setupMapScreen();
@@ -121,6 +235,9 @@ window.addEventListener('DOMContentLoaded', () => {
   setupStoriesScreen();
   setupVoiceScreen();
   setupEmergencyAlert();
+  
+  // Load initial backend database state
+  await fetchState();
   
   // Initial render
   updateLanguage('en');
@@ -160,6 +277,15 @@ window.navigateTo = function(screenId) {
   // Screen specific rendering/triggers
   if (screenId === 'map') {
     selectMapSource(appState.selectedSourceId);
+    setTimeout(() => {
+      if (map) {
+        map.invalidateSize();
+        const selected = markers[appState.selectedSourceId];
+        if (selected) {
+          map.panTo(selected.coords);
+        }
+      }
+    }, 200);
   }
   if (screenId === 'finder') {
     renderFinderList();
@@ -173,6 +299,9 @@ window.navigateTo = function(screenId) {
   }
   if (screenId === 'voice') {
     renderVoiceSuggestions();
+  }
+  if (screenId === 'asha') {
+    updateAshaScreenVals();
   }
 
   // Stop any reading TTS from previous screen
@@ -236,6 +365,9 @@ function updateLanguage(lang) {
   }
   if (appState.currentScreen === 'voice') {
     renderVoiceSuggestions();
+  }
+  if (appState.currentScreen === 'asha') {
+    updateAshaScreenVals();
   }
 }
 
@@ -457,7 +589,7 @@ function setupReportScreen() {
   });
 
   // Submit Report Trigger
-  dom.submitReportBtn.addEventListener('click', () => {
+  dom.submitReportBtn.addEventListener('click', async () => {
     if (selectedProblems.length === 0) {
       alert("Please select at least one problem to submit.");
       return;
@@ -469,26 +601,8 @@ function setupReportScreen() {
       targetSource = 'temple';
     }
 
-    const s = appState.sources[targetSource];
-    s.complaints = [...new Set([...s.complaints, ...selectedProblems])];
-    
-    // Escalate risk states
-    if (selectedProblems.includes('Family Sick')) {
-      s.status = 'risk';
-      s.trust = Math.max(1, s.trust - 2);
-      appState.globalWaterStatus = 'risk';
-    } else {
-      s.status = 'careful';
-      s.trust = Math.max(1, s.trust - 1);
-      if (appState.globalWaterStatus !== 'risk') {
-        appState.globalWaterStatus = 'careful';
-      }
-    }
-
-    // Refresh components
-    updateGlobalWaterUI();
-    updateFeedUI();
-    updateMapMarkers();
+    // Submit report to database on backend API
+    await sendReportAction(selectedProblems, targetSource);
 
     // Show Success Alert
     dom.successToast.classList.add('active');
@@ -508,22 +622,73 @@ function setupReportScreen() {
 }
 
 // Screen 3: Village Water Map Logic
+let map = null;
+let markers = {};
+
+function createCustomMarkerHTML(id, source) {
+  const isSelected = appState.selectedSourceId === id ? 'active-selected' : '';
+  const emoji = id === 'ro' ? '🧪' : id === 'tank' ? '🚰' : id === 'school' ? '🏫' : '🛕';
+  const dict = translations[appState.currentLanguage];
+  const labelText = dict[source.nameKey] || source.nameKey;
+  
+  return `
+    <div class="custom-map-marker ${source.status} ${isSelected}" data-source="${id}">
+      <span class="marker-emoji">${emoji}</span>
+      <span class="marker-label">${labelText}</span>
+    </div>
+  `;
+}
+
 function setupMapScreen() {
-  dom.mapMarkers.forEach(marker => {
-    marker.addEventListener('click', () => {
-      const sourceId = marker.dataset.source;
-      selectMapSource(sourceId);
+  const villageCenter = [17.4483, 78.3488];
+  
+  map = L.map('map', {
+    zoomControl: false,
+    attributionControl: false
+  }).setView(villageCenter, 15);
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    maxZoom: 19
+  }).addTo(map);
+
+  L.control.zoom({
+    position: 'bottomright'
+  }).addTo(map);
+
+  const locations = {
+    ro: { coords: [17.4491, 78.3479], emoji: '🧪' },
+    tank: { coords: [17.4475, 78.3512], emoji: '🚰' },
+    school: { coords: [17.4502, 78.3495], emoji: '🏫' },
+    temple: { coords: [17.4462, 78.3465], emoji: '🛕' }
+  };
+
+  Object.keys(appState.sources).forEach(id => {
+    const s = appState.sources[id];
+    const loc = locations[id] || { coords: villageCenter, emoji: '💧' };
+    
+    const markerIcon = L.divIcon({
+      html: createCustomMarkerHTML(id, s),
+      className: 'custom-map-icon',
+      iconSize: [50, 50],
+      iconAnchor: [25, 25]
     });
+
+    const marker = L.marker(loc.coords, { icon: markerIcon }).addTo(map);
+    marker.on('click', () => {
+      selectMapSource(id);
+    });
+
+    markers[id] = { marker, coords: loc.coords, emoji: loc.emoji };
   });
 }
 
 function selectMapSource(sourceId) {
   appState.selectedSourceId = sourceId;
-  
-  // Highlight active marker class
-  dom.mapMarkers.forEach(m => {
-    m.style.transform = m.dataset.source === sourceId ? 'scale(1.2)' : 'scale(1)';
-  });
+  updateMapMarkers();
+
+  if (map && markers[sourceId]) {
+    map.panTo(markers[sourceId].coords);
+  }
 
   const s = appState.sources[sourceId];
   const dict = translations[appState.currentLanguage];
@@ -553,10 +718,21 @@ function selectMapSource(sourceId) {
 }
 
 function updateMapMarkers() {
-  dom.mapMarkers.forEach(marker => {
-    const sourceId = marker.dataset.source;
-    const s = appState.sources[sourceId];
-    marker.className = `map-marker ${s.status}`;
+  if (!map) return;
+  
+  Object.keys(markers).forEach(id => {
+    const s = appState.sources[id];
+    const markerInfo = markers[id];
+    
+    if (markerInfo && markerInfo.marker) {
+      const newIcon = L.divIcon({
+        html: createCustomMarkerHTML(id, s),
+        className: 'custom-map-icon',
+        iconSize: [50, 50],
+        iconAnchor: [25, 25]
+      });
+      markerInfo.marker.setIcon(newIcon);
+    }
   });
 }
 
@@ -639,52 +815,15 @@ function setupAshaCounter(type, displayEl) {
   const plusBtn = document.querySelector(`.asha-btn-count.plus[data-type="${type}"]`);
   const minusBtn = document.querySelector(`.asha-btn-count.minus[data-type="${type}"]`);
 
-  plusBtn.addEventListener('click', () => {
-    appState.sicknessCases[type]++;
-    displayEl.textContent = appState.sicknessCases[type];
-    calculateAshaRisk();
+  plusBtn.addEventListener('click', async () => {
+    await sendSicknessAction(type, 1);
   });
 
-  minusBtn.addEventListener('click', () => {
+  minusBtn.addEventListener('click', async () => {
     if (appState.sicknessCases[type] > 0) {
-      appState.sicknessCases[type]--;
-      displayEl.textContent = appState.sicknessCases[type];
-      calculateAshaRisk();
+      await sendSicknessAction(type, -1);
     }
   });
-}
-
-function calculateAshaRisk() {
-  const total = appState.sicknessCases.diarrhea + appState.sicknessCases.vomiting + appState.sicknessCases.fever;
-  const dict = translations[appState.currentLanguage];
-  
-  let riskPercentage = Math.min(100, (total / 10) * 100);
-  dom.ashaRiskBar.style.width = `${riskPercentage}%`;
-
-  if (total <= 2) {
-    dom.ashaRiskBar.style.background = 'var(--green-safe)';
-    dom.ashaRiskLabel.textContent = `${dict.low} (${total} cases)`;
-    if (appState.globalWaterStatus === 'risk') {
-      appState.globalWaterStatus = 'careful';
-      updateGlobalWaterUI();
-    }
-  } else if (total <= 5) {
-    dom.ashaRiskBar.style.background = 'var(--orange-warning)';
-    dom.ashaRiskLabel.textContent = `${dict.medium} (${total} cases)`;
-    if (appState.globalWaterStatus !== 'risk') {
-      appState.globalWaterStatus = 'careful';
-      updateGlobalWaterUI();
-    }
-  } else {
-    dom.ashaRiskBar.style.background = 'var(--red-danger)';
-    dom.ashaRiskLabel.textContent = `${dict.high} (${total} cases)`;
-    
-    // Sickness threshold exceeded: trigger red community emergency state
-    if (appState.globalWaterStatus !== 'risk') {
-      appState.globalWaterStatus = 'risk';
-      updateGlobalWaterUI();
-    }
-  }
 }
 
 // Screen 7: Reputation Screen Rating list
@@ -953,34 +1092,15 @@ function dismissEmergencyAlert() {
 }
 
 // Presentation Demo Tools Helper (Sidebar Controls)
-window.demoSetStatus = function(status) {
-  appState.globalWaterStatus = status;
+window.demoSetStatus = async function(status) {
+  // Always reset database first to get a clean slate
+  await resetAPIState();
   
-  if (status === 'risk') {
-    appState.sources.temple.status = 'risk';
-    appState.sources.school.status = 'risk';
-  } else if (status === 'careful') {
-    appState.sources.school.status = 'careful';
-    appState.sources.temple.status = 'careful';
-  } else {
-    // Reset all to safe
-    Object.keys(appState.sources).forEach(id => {
-      appState.sources[id].status = 'safe';
-      appState.sources[id].trust = 5;
-      appState.sources[id].complaints = [];
-    });
-    // Reset ASHA cases
-    appState.sicknessCases.diarrhea = 0;
-    appState.sicknessCases.vomiting = 0;
-    appState.sicknessCases.fever = 0;
-    
-    dom.ashaDiarrheaVal.textContent = '0';
-    dom.ashaVomitingVal.textContent = '0';
-    dom.ashaFeverVal.textContent = '0';
-    calculateAshaRisk();
+  if (status === 'careful') {
+    await sendReportAction(['Bad Taste'], 'school');
+  } else if (status === 'risk') {
+    await sendReportAction(['Family Sick'], 'temple');
+    await sendSicknessAction('diarrhea', 4);
+    await sendSicknessAction('vomiting', 3);
   }
-
-  updateGlobalWaterUI();
-  updateFeedUI();
-  updateMapMarkers();
 };

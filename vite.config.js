@@ -1,5 +1,13 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: './', // Ensures assets are loaded using relative paths for flexible hosting
+  base: './',
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true
+      }
+    }
+  }
 });

@@ -6,6 +6,10 @@
   <title>JalRakshak Community - Water Safety Awareness Platform</title>
   <meta name="description" content="A visual-first, multilingual, voice-synthesized water safety prototype designed for rural communities.">
   <link rel="stylesheet" href="style.css">
+  
+  <!-- Leaflet Map CDNs -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
 
@@ -176,36 +180,8 @@
         <h2 class="section-title" data-i18n="mapTitle">Village Water Map</h2>
         <p class="section-subtitle" data-i18n="mapSub">Tap any water point to check safety:</p>
 
-        <!-- Simulated Map Grid -->
-        <div class="map-canvas">
-          <div class="map-river"></div>
-          <div class="map-path map-path-1"></div>
-          <div class="map-path map-path-2"></div>
-          
-          <!-- RO Plant Marker -->
-          <div class="map-marker safe" style="top: 25%; left: 68%;" data-source="ro" id="marker-ro">
-            🧪
-            <span class="map-marker-label" data-i18n="panchayatRO">Panchayat RO Plant</span>
-          </div>
-          
-          <!-- Water Tank Marker -->
-          <div class="map-marker safe" style="top: 15%; left: 15%;" data-source="tank" id="marker-tank">
-            🚰
-            <span class="map-marker-label" data-i18n="villageTank">Main Tank</span>
-          </div>
-
-          <!-- School Pump Marker -->
-          <div class="map-marker careful" style="top: 60%; left: 20%;" data-source="school" id="marker-school">
-            💧
-            <span class="map-marker-label" data-i18n="schoolPump">School Pump</span>
-          </div>
-
-          <!-- Temple Well Marker -->
-          <div class="map-marker risk" style="top: 70%; left: 75%;" data-source="temple" id="marker-temple">
-            🕳️
-            <span class="map-marker-label" data-i18n="templeWell">Temple Well</span>
-          </div>
-        </div>
+        <!-- Real-Time Interactive Leaflet Map -->
+        <div id="map" class="map-canvas"></div>
 
         <!-- Marker Detail Summary Card -->
         <div class="source-detail-card" id="map-detail-card" style="margin-bottom: 16px;">
