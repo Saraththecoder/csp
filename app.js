@@ -85,7 +85,7 @@ const dom = {
   storyNextBtn: document.getElementById('story-next'),
 
   // Voice UI
-  voiceChat: document.getElementById('voice-chat-box'),
+  voiceGreeting: document.getElementById('voice-greeting-bubble'),
   micBtn: document.getElementById('mic-button'),
   audioWave: document.getElementById('audio-wave'),
   voiceSuggestions: document.getElementById('voice-suggestions-list'),
@@ -1195,7 +1195,7 @@ function renderVoiceSuggestions() {
 
   questions.forEach(q => {
     const chip = document.createElement('button');
-    chip.className = 'voice-suggestion-chip';
+    chip.className = 'voice-chip-btn';
     chip.textContent = q.text;
     chip.addEventListener('click', () => {
       triggerVoiceExchange(q.text, q.ans);
@@ -1211,9 +1211,12 @@ function startListening() {
   
   const dict = translations[appState.currentLanguage];
   
-  // Add temporary listening message
-  addChatBubble(dict.listening, 'bot');
-  speakText(dict.listening);
+  // Update greeting bubble with listening message
+  if (dom.voiceGreeting) {
+    dom.voiceGreeting.innerHTML = `<span>🎙️ ${dict.listening}</span>`;
+    dom.voiceGreeting.classList.add('bubble-flash');
+    setTimeout(() => dom.voiceGreeting.classList.remove('bubble-flash'), 600);
+  }
 
   // Auto input a mock question after 2.5 seconds
   setTimeout(() => {
@@ -1240,12 +1243,13 @@ function stopListening() {
 }
 
 function addChatBubble(text, sender) {
-  const bubble = document.createElement('div');
-  bubble.className = `chat-bubble ${sender}`;
-  bubble.textContent = text;
-  
-  dom.voiceChat.appendChild(bubble);
-  dom.voiceChat.scrollTop = dom.voiceChat.scrollHeight; // Scroll to bottom
+  // Update the greeting bubble text with the latest message
+  if (dom.voiceGreeting) {
+    dom.voiceGreeting.innerHTML = `<span>${sender === 'user' ? '🙂' : '🤖'} ${text}</span>`;
+    // Add a brief highlight animation
+    dom.voiceGreeting.classList.add('bubble-flash');
+    setTimeout(() => dom.voiceGreeting.classList.remove('bubble-flash'), 600);
+  }
 }
 
 function triggerVoiceExchange(question, answer) {
