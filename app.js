@@ -639,6 +639,22 @@ function createCustomMarkerHTML(id, source) {
   `;
 }
 
+// Calculate distance in meters between two lat/lng pairs
+function getDistanceMeters(lat1, lon1, lat2, lon2) {
+  const R = 6371e3; // metres
+  const phi1 = lat1 * Math.PI/180;
+  const phi2 = lat2 * Math.PI/180;
+  const deltaPhi = (lat2-lat1) * Math.PI/180;
+  const deltaLambda = (lon2-lon1) * Math.PI/180;
+
+  const a = Math.sin(deltaPhi/2) * Math.sin(deltaPhi/2) +
+            Math.cos(phi1) * Math.cos(phi2) *
+            Math.sin(deltaLambda/2) * Math.sin(deltaLambda/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+  return Math.round(R * c); // in meters
+}
+
 function setupMapScreen() {
   const villageCenter = [17.4483, 78.3488];
   
@@ -655,31 +671,80 @@ function setupMapScreen() {
     position: 'bottomright'
   }).addTo(map);
 
-  const locations = {
-    ro: { coords: [17.4491, 78.3479], emoji: '🧪' },
-    tank: { coords: [17.4475, 78.3512], emoji: '🚰' },
-    school: { coords: [17.4502, 78.3495], emoji: '🏫' },
-    temple: { coords: [17.4462, 78.3465], emoji: '🛕' }
+  // Helper to initialize markers centered near a coordinate
+  const initializeMarkersWithCenter = (centerCoords) => {
+    // Clear old markers if any exist
+    Object.keys(markers).forEach(id => {
+      if (markers[id] && markers[id].marker) {
+        map.removeLayer(markers[id].marker);
+      }
+    });
+    markers = {};
+
+    // Offset water sources dynamically near the current center
+    const locations = {
+      ro: { coords: [centerCoords[0] + 0.0008, centerCoords[1] - 0.0009], emoji: '🧪' },
+      tank: { coords: [centerCoords[0] - 0.0008, centerCoords[1] + 0.0024], emoji: '🚰' },
+      school: { coords: [centerCoords[0] + 0.0019, centerCoords[1] + 0.0007], emoji: '🏫' },
+      temple: { coords: [centerCoords[0] - 0.0021, centerCoords[1] - 0.0023], emoji: '🛕' }
+    };
+
+    // Calculate real-time distances & travel times relative to the user/center coords
+    Object.keys(appState.sources).forEach(id => {
+      const s = appState.sources[id];
+      const loc = locations[id] || { coords: centerCoords, emoji: '💧' };
+      
+      const dist = getDistanceMeters(centerCoords[0], centerCoords[1], loc.coords[0], loc.coords[1]);
+      s.distance = dist;
+      // Walking speed ~ 80 meters per minute
+      s.time = Math.max(1, Math.round(dist / 80));
+
+      const markerIcon = L.divIcon({
+        html: createCustomMarkerHTML(id, s),
+        className: 'custom-map-icon',
+        iconSize: [50, 50],
+        iconAnchor: [25, 25]
+      });
+
+      const marker = L.marker(loc.coords, { icon: markerIcon }).addTo(map);
+      marker.on('click', () => {
+        selectMapSource(id);
+      });
+
+      markers[id] = { marker, coords: loc.coords, emoji: loc.emoji };
+    });
+
+    // Refresh Safe Water Finder list with real calculated distances
+    renderFinderList();
   };
 
-  Object.keys(appState.sources).forEach(id => {
-    const s = appState.sources[id];
-    const loc = locations[id] || { coords: villageCenter, emoji: '💧' };
-    
-    const markerIcon = L.divIcon({
-      html: createCustomMarkerHTML(id, s),
-      className: 'custom-map-icon',
-      iconSize: [50, 50],
-      iconAnchor: [25, 25]
-    });
+  // Attempt real-time geolocation with fallback
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const userCoords = [position.coords.latitude, position.coords.longitude];
+        map.setView(userCoords, 15);
+        
+        // Add User actual location marker
+        L.marker(userCoords, {
+          icon: L.divIcon({
+            html: '<div class="user-location-marker">👤</div>',
+            className: 'user-icon',
+            iconSize: [32, 32],
+            iconAnchor: [16, 16]
+          })
+        }).addTo(map);
 
-    const marker = L.marker(loc.coords, { icon: markerIcon }).addTo(map);
-    marker.on('click', () => {
-      selectMapSource(id);
-    });
-
-    markers[id] = { marker, coords: loc.coords, emoji: loc.emoji };
-  });
+        initializeMarkersWithCenter(userCoords);
+      },
+      (error) => {
+        console.warn("Geolocation permission denied or failed, using village center fallback:", error);
+        initializeMarkersWithCenter(villageCenter);
+      }
+    );
+  } else {
+    initializeMarkersWithCenter(villageCenter);
+  }
 }
 
 function selectMapSource(sourceId) {
