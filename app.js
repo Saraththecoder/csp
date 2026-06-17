@@ -438,6 +438,7 @@ function speakText(text) {
       const avatar = document.getElementById('bot-avatar-container');
       if (avatar) avatar.classList.remove('responding');
       if (dom.storyAudioBtn) dom.storyAudioBtn.classList.remove('playing');
+      appState.activeSpeech = null;
     };
 
     appState.activeSpeech.onerror = () => {
@@ -445,6 +446,7 @@ function speakText(text) {
       const avatar = document.getElementById('bot-avatar-container');
       if (avatar) avatar.classList.remove('responding');
       if (dom.storyAudioBtn) dom.storyAudioBtn.classList.remove('playing');
+      appState.activeSpeech = null;
     };
 
     window.speechSynthesis.speak(appState.activeSpeech);
@@ -473,6 +475,7 @@ function stopTTS() {
   const avatar = document.getElementById('bot-avatar-container');
   if (avatar) avatar.classList.remove('responding');
   if (dom.storyAudioBtn) dom.storyAudioBtn.classList.remove('playing');
+  appState.activeSpeech = null;
 }
 
 // Get text content of active screen to read out loud
@@ -1164,7 +1167,7 @@ function setupStoriesScreen() {
 
   dom.storyAudioBtn.addEventListener('click', () => {
     const activeStory = getActiveStoryData();
-    if (appState.activeSpeech) {
+    if (window.speechSynthesis && window.speechSynthesis.speaking) {
       stopTTS();
       dom.storyAudioBtn.classList.remove('playing');
     } else {
