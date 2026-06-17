@@ -1215,39 +1215,7 @@ body {
   100% { box-shadow: 0 0 0 0 rgba(26, 115, 232, 0); }
 }
 
-/* YouTube Watch Button on Stories */
-.story-yt-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 13px 16px;
-  background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
-  color: #ffffff;
-  border-radius: 14px;
-  font-size: 14px;
-  font-weight: 700;
-  text-decoration: none;
-  margin-bottom: 12px;
-  box-shadow: 0 6px 16px rgba(255, 0, 0, 0.25);
-  transition: all 0.25s ease;
-  letter-spacing: 0.2px;
-}
 
-.story-yt-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 22px rgba(255, 0, 0, 0.35);
-  filter: brightness(1.05);
-}
-
-.story-yt-btn:active {
-  transform: scale(0.97);
-}
-
-.story-yt-btn span {
-  letter-spacing: 0.3px;
-}
 
 /* Bot Avatar styling */
 .bot-avatar-wrapper {
