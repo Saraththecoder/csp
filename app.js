@@ -27,6 +27,7 @@ const appState = {
 
   // Selected map source details
   selectedSourceId: 'ro',
+  userCoords: [17.4483, 78.3488],
 
   // Current Story page
   currentStoryIndex: 0
@@ -56,6 +57,9 @@ const dom = {
   detailStatus: document.getElementById('detail-status'),
   detailTrust: document.getElementById('detail-trust'),
   detailComplaints: document.getElementById('detail-complaints'),
+  navStatusCard: document.getElementById('map-navigation-card'),
+  navStatusText: document.getElementById('nav-status-text'),
+  navStatusProgress: document.getElementById('map-navigation-progress'),
   
   // Finder Screen
   finderContainer: document.getElementById('finder-items-list'),
@@ -779,6 +783,7 @@ function setupMapScreen() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const userCoords = [position.coords.latitude, position.coords.longitude];
+        appState.userCoords = userCoords;
         map.setView(userCoords, 15);
         
         // Add User actual location marker
@@ -909,26 +914,102 @@ function renderFinderList() {
 }
 
 // Simulate walk-direction loader
+let activeRoutePolyline = null;
+let activeRouteAnimatorMarker = null;
+
 window.startSimulatingDirections = function(sourceId) {
+  // Navigate to map screen
+  navigateTo('map');
+
   const s = appState.sources[sourceId];
   const dict = translations[appState.currentLanguage];
   const name = dict[s.nameKey] || s.nameKey;
 
-  dom.directionsOverlay.classList.add('active');
-  dom.directionsTitle.textContent = `${dict.simulatingDirections} (${name})`;
-  
-  // Reset bar
-  dom.directionsProgress.style.width = '0%';
+  // Hide detail card, show navigation card
+  if (dom.detailCard) dom.detailCard.classList.remove('active');
+  if (dom.navStatusCard) dom.navStatusCard.style.display = 'block';
+  if (dom.navStatusText) dom.navStatusText.textContent = `${dict.simulatingDirections || 'Showing route to'} ${name}...`;
+  if (dom.navStatusProgress) dom.navStatusProgress.style.width = '0%';
 
-  setTimeout(() => {
-    dom.directionsProgress.style.width = '100%';
-  }, 50);
+  // Clear any existing active route layers
+  if (map) {
+    if (activeRoutePolyline) map.removeLayer(activeRoutePolyline);
+    if (activeRouteAnimatorMarker) map.removeLayer(activeRouteAnimatorMarker);
+  }
 
-  // After 3 seconds, simulate arrival
+  // Coordinates
+  const startCoords = appState.userCoords || [17.4483, 78.3488];
+  const endCoords = markers[sourceId] ? markers[sourceId].coords : startCoords;
+
+  // Draw path polyline
+  activeRoutePolyline = L.polyline([startCoords, endCoords], {
+    color: 'var(--blue-primary)',
+    weight: 5,
+    opacity: 0.7,
+    dashArray: '10, 10',
+    lineCap: 'round'
+  }).addTo(map);
+
+  // Draw moving animator marker
+  activeRouteAnimatorMarker = L.marker(startCoords, {
+    icon: L.divIcon({
+      html: '<div class="user-location-marker" style="font-size: 16px;">🚶‍♂️</div>',
+      className: 'user-icon',
+      iconSize: [32, 32],
+      iconAnchor: [16, 16]
+    })
+  }).addTo(map);
+
+  // Pan map to bounds to view entire route
+  const bounds = L.latLngBounds([startCoords, endCoords]);
+  map.fitBounds(bounds, { padding: [50, 50] });
+
+  // Animation loop
+  let startTime = null;
+  const duration = 3000; // 3 seconds route walk simulation
+
+  function animateRoute(timestamp) {
+    if (!startTime) startTime = timestamp;
+    const elapsed = timestamp - startTime;
+    const progress = Math.min(1, elapsed / duration);
+
+    // Update progress bar
+    if (dom.navStatusProgress) dom.navStatusProgress.style.width = `${progress * 100}%`;
+
+    // Interpolate lat/lng
+    const currentLat = startCoords[0] + (endCoords[0] - startCoords[0]) * progress;
+    const currentLng = startCoords[1] + (endCoords[1] - startCoords[1]) * progress;
+    
+    if (activeRouteAnimatorMarker) {
+      activeRouteAnimatorMarker.setLatLng([currentLat, currentLng]);
+    }
+
+    if (progress < 1) {
+      requestAnimationFrame(animateRoute);
+    } else {
+      // Arrived!
+      if (dom.navStatusText) dom.navStatusText.textContent = `${dict.arrived || 'Arrived at'} ${name}!`;
+      speakText(`${dict.arrived || 'You have arrived at the source!'} ${name}`);
+
+      // Highlight the target source card detail
+      selectMapSource(sourceId);
+
+      // Clean up path layers after 2.5 seconds
+      setTimeout(() => {
+        if (map) {
+          if (activeRoutePolyline) map.removeLayer(activeRoutePolyline);
+          if (activeRouteAnimatorMarker) map.removeLayer(activeRouteAnimatorMarker);
+        }
+        if (dom.navStatusCard) dom.navStatusCard.style.display = 'none';
+        if (dom.detailCard) dom.detailCard.classList.add('active');
+      }, 2500);
+    }
+  }
+
+  // Delay starting animation slightly for transition ease
   setTimeout(() => {
-    dom.directionsTitle.textContent = dict.arrived;
-    speakText(dict.arrived);
-  }, 3050);
+    requestAnimationFrame(animateRoute);
+  }, 300);
 };
 
 // Screen 6: ASHA Worker Dashboard

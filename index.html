@@ -183,6 +183,17 @@
         <!-- Real-Time Interactive Leaflet Map -->
         <div id="map" class="map-canvas"></div>
 
+        <!-- Navigation Status Card -->
+        <div class="navigation-status-card" id="map-navigation-card" style="display: none; margin-bottom: 16px;">
+          <div class="nav-status-header">
+            <span class="nav-status-title" id="nav-status-text">Showing route...</span>
+            <span class="nav-status-badge">🚶‍♂️ 80m/min</span>
+          </div>
+          <div class="direction-line" style="margin: 10px 0 0 0; height: 6px;">
+            <div class="direction-progress" id="map-navigation-progress" style="width: 0%;"></div>
+          </div>
+        </div>
+
         <!-- Marker Detail Summary Card -->
         <div class="source-detail-card" id="map-detail-card" style="margin-bottom: 16px;">
           <div class="source-detail-header">
