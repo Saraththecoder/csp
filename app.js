@@ -41,6 +41,7 @@ const dom = {
   
   // Home Status Card
   homeStatusCard: document.getElementById('home-status-card'),
+  homeStatusIconBox: document.getElementById('home-status-icon-box'),
   homeStatusText: document.getElementById('home-status-text'),
   homeStatusBadge: document.getElementById('home-status-badge'),
   homeFeedList: document.getElementById('home-feed-list'),
@@ -493,19 +494,45 @@ function updateGlobalWaterUI() {
   
   if (appState.globalWaterStatus === 'safe') {
     dom.homeStatusCard.classList.add('safe');
-    dom.homeStatusBadge.classList.add('safe');
+    dom.homeStatusBadge.className = 'status-badge safe';
     dom.homeStatusText.textContent = dict.normalStatus;
     dom.homeStatusBadge.textContent = dict.looksSafe;
+    
+    // Green check shield SVG
+    dom.homeStatusIconBox.innerHTML = `
+      <svg class="status-glow-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        <polyline points="9 11 11 13 15 9"/>
+      </svg>
+    `;
   } else if (appState.globalWaterStatus === 'careful') {
     dom.homeStatusCard.classList.add('careful');
-    dom.homeStatusBadge.classList.add('careful');
+    dom.homeStatusBadge.className = 'status-badge careful';
     dom.homeStatusText.textContent = dict.warningStatus;
     dom.homeStatusBadge.textContent = dict.beCareful;
+    
+    // Orange warning triangle SVG
+    dom.homeStatusIconBox.innerHTML = `
+      <svg class="status-glow-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/>
+        <line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+    `;
   } else {
     dom.homeStatusCard.classList.add('risk');
-    dom.homeStatusBadge.classList.add('risk');
+    dom.homeStatusBadge.className = 'status-badge risk';
     dom.homeStatusText.textContent = dict.alertStatus;
     dom.homeStatusBadge.textContent = dict.highRisk;
+    
+    // Red emergency octagon SVG
+    dom.homeStatusIconBox.innerHTML = `
+      <svg class="status-glow-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+    `;
     
     // Auto-trigger full screen Emergency Alert
     showEmergencyAlert();
@@ -554,12 +581,21 @@ function updateFeedUI() {
     const descText = dict[item.textKey] || item.textKey;
 
     const li = document.createElement('div');
-    li.className = 'feed-item';
+    li.className = `feed-card ${item.status}`;
+    
+    // Choose mini status icon symbol
+    let statusIcon = '🟢';
+    if (item.status === 'careful') statusIcon = '⚠️';
+    else if (item.status === 'risk') statusIcon = '🚨';
+
     li.innerHTML = `
-      <div class="feed-dot ${item.status}"></div>
-      <div class="feed-content">
-        <p><strong>${sourceName}</strong>: ${descText}</p>
-        <span class="feed-time">${item.time} ${dict.ago}</span>
+      <div class="feed-status-badge-mini ${item.status}">${statusIcon}</div>
+      <div class="feed-details">
+        <div class="feed-row-top">
+          <span class="feed-source-name">${sourceName}</span>
+          <span class="feed-time-badge">${item.time} ${dict.ago}</span>
+        </div>
+        <p class="feed-desc">${descText}</p>
       </div>
     `;
     dom.homeFeedList.appendChild(li);
