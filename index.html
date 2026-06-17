@@ -428,43 +428,58 @@
 
       <!-- ==================== SCREEN 9: VOICE ASSISTANT ==================== -->
       <section class="screen" id="voice-screen">
-        <h2 class="section-title" data-i18n="voiceTitle">JalRakshak Voice</h2>
-        
-        <!-- Bot Avatar Area -->
-        <div class="bot-avatar-wrapper">
+
+        <!-- Premium Hero Header -->
+        <div class="voice-hero">
+          <!-- Bot Avatar with Rings -->
           <div class="bot-avatar-container" id="bot-avatar-container">
             <div class="bot-wave-ring ring1"></div>
             <div class="bot-wave-ring ring2"></div>
             <div class="bot-wave-ring ring3"></div>
             <img src="bot.png" alt="JalRakshak Bot" class="bot-avatar-img" id="bot-avatar">
           </div>
+          <div class="voice-hero-text">
+            <h2 class="voice-hero-title" data-i18n="voiceTitle">JalRakshak Voice</h2>
+            <div class="voice-status-pill" id="voice-status-pill">
+              <span class="voice-status-dot"></span>
+              <span class="voice-status-label" data-i18n="voiceInstruction">Ready to help</span>
+            </div>
+          </div>
         </div>
 
-        <p class="section-subtitle" data-i18n="voiceInstruction">Tap microphone and speak, or tap a question below:</p>
-
-        <!-- Conversational chat box view -->
+        <!-- Conversational chat box -->
         <div class="voice-chat-box" id="voice-chat-box">
           <div class="chat-bubble bot">
             <span>👋 Namaste! I am JalRakshak. How can I help you today?</span>
           </div>
         </div>
 
-        <!-- Interactive Question Tags -->
+        <!-- Quick Question Chips -->
+        <div class="voice-chips-label">💡 Try asking:</div>
         <div class="voice-suggestions" id="voice-suggestions-list">
           <!-- Rendered in app.js -->
         </div>
 
-        <!-- Glowing Microphone Trigger Area -->
-        <div class="voice-mic-area" style="margin-bottom: 24px;">
-          <button class="mic-btn" id="mic-button" aria-label="Microphone">🎙️</button>
-          
-          <!-- Speech output waveform indicator -->
-          <div class="audio-wave" id="audio-wave">
-            <div class="wave-bar"></div>
-            <div class="wave-bar"></div>
-            <div class="wave-bar"></div>
-            <div class="wave-bar"></div>
-            <div class="wave-bar"></div>
+        <!-- Microphone Row -->
+        <div class="voice-mic-row">
+          <div class="voice-mic-inner">
+            <p class="voice-mic-hint" data-i18n="voiceInstruction">Tap to speak</p>
+            <button class="mic-btn" id="mic-button" aria-label="Microphone">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                <line x1="12" y1="19" x2="12" y2="23"/>
+                <line x1="8" y1="23" x2="16" y2="23"/>
+              </svg>
+            </button>
+            <!-- Speech waveform -->
+            <div class="audio-wave" id="audio-wave">
+              <div class="wave-bar"></div>
+              <div class="wave-bar"></div>
+              <div class="wave-bar"></div>
+              <div class="wave-bar"></div>
+              <div class="wave-bar"></div>
+            </div>
           </div>
         </div>
 

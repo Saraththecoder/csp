@@ -1079,52 +1079,62 @@ const storiesData = [
   {
     titleKey: 'story1Title',
     textKey: 'story1Text',
-    emoji: '🦴☠️🧪'
+    emoji: '🦴☠️🧪',
+    ytLink: 'https://www.youtube.com/watch?v=Y3jCb4Yy-GQ'  // Fluoride in water safety
   },
   {
     titleKey: 'story2Title',
     textKey: 'story2Text',
-    emoji: '🦠🦠🔬'
+    emoji: '🦠🦠🔬',
+    ytLink: 'https://www.youtube.com/watch?v=bOoMpOgSdho'  // How to boil water properly
   },
   {
     titleKey: 'story3Title',
     textKey: 'story3Text',
-    emoji: '🥛🧺🪰'
+    emoji: '🥛🧺🪰',
+    ytLink: 'https://www.youtube.com/watch?v=d5apyAgWbr8'  // Safe water storage
   },
   {
     titleKey: 'story4Title',
     textKey: 'story4Text',
-    emoji: '🧼🤕☠️'
+    emoji: '🧼🤕☠️',
+    ytLink: 'https://www.youtube.com/watch?v=BKorP55Aqvg'  // Arsenic water contamination
   },
   {
     titleKey: 'story5Title',
     textKey: 'story5Text',
-    emoji: '🚽🚯🕳️'
+    emoji: '🚽🚯🕳️',
+    ytLink: 'https://www.youtube.com/watch?v=EZF2PRODfBU'  // Open defecation free villages
   },
   {
     titleKey: 'story6Title',
     textKey: 'story6Text',
-    emoji: '🧼🙌🚰'
+    emoji: '🧼🙌🚰',
+    ytLink: 'https://www.youtube.com/watch?v=3ZcKD8RP9oI'  // Handwashing technique WHO
   },
   {
     titleKey: 'story7Title',
     textKey: 'story7Text',
-    emoji: '🏺🧼🧽'
+    emoji: '🏺🧼🧽',
+    ytLink: 'https://www.youtube.com/watch?v=XkCkSPmSb6w'  // How to clean water containers
   },
   {
     titleKey: 'story8Title',
     textKey: 'story8Text',
-    emoji: '🧪💦🛡️'
+    emoji: '🧪💦🛡️',
+    ytLink: 'https://www.youtube.com/watch?v=N0eNpWEgUdA'  // Water chlorination / bleach treatment
   },
   {
     titleKey: 'story9Title',
     textKey: 'story9Text',
-    emoji: '🥛🧪🧒'
+    emoji: '🥛🧪🧒',
+    ytLink: 'https://www.youtube.com/watch?v=FiJOtZ0OQCU'  // ORS preparation for children
   },
   {
     titleKey: 'story10Title',
     textKey: 'story10Text',
-    emoji: '📢👩‍⚕️🏡'
+    emoji: '📢👩‍⚕️🏡',
+    ytLink: 'https://www.youtube.com/watch?v=lhLbHDGmJ0c'  // Community water safety awareness
   }
 ];
 
@@ -1153,7 +1163,8 @@ function getActiveStoryData() {
   return {
     title: dict[story.titleKey] || story.titleKey,
     text: dict[story.textKey] || story.textKey,
-    emoji: story.emoji
+    emoji: story.emoji,
+    ytLink: story.ytLink
   };
 }
 
@@ -1166,6 +1177,26 @@ function renderStory() {
   
   // Render high-quality generated village illustration
   dom.storyArt.innerHTML = `<img src="./story${appState.currentStoryIndex + 1}.png" class="story-art-img" alt="${activeStory.title}">`;
+
+  // Render or update the Watch Video button
+  let ytBtn = document.getElementById('story-yt-btn');
+  if (!ytBtn) {
+    ytBtn = document.createElement('a');
+    ytBtn.id = 'story-yt-btn';
+    ytBtn.className = 'story-yt-btn';
+    ytBtn.target = '_blank';
+    ytBtn.rel = 'noopener noreferrer';
+    // Insert before the story nav
+    const nav = document.querySelector('.story-nav');
+    if (nav) nav.parentNode.insertBefore(ytBtn, nav);
+  }
+  ytBtn.href = activeStory.ytLink;
+  ytBtn.innerHTML = `
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+    </svg>
+    <span>Watch on YouTube</span>
+  `;
   
   // Enable/disable buttons
   dom.storyPrevBtn.style.visibility = appState.currentStoryIndex === 0 ? 'hidden' : 'visible';
