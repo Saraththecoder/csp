@@ -85,7 +85,7 @@ const dom = {
   storyNextBtn: document.getElementById('story-next'),
 
   // Voice UI
-  voiceGreeting: document.getElementById('voice-greeting-bubble'),
+  voiceChat: document.getElementById('voice-chat-box'),
   micBtn: document.getElementById('mic-button'),
   audioWave: document.getElementById('audio-wave'),
   voiceSuggestions: document.getElementById('voice-suggestions-list'),
@@ -428,34 +428,34 @@ function speakText(text) {
     appState.activeSpeech.rate = 0.9; // speak slightly slower for clarity
     
     appState.activeSpeech.onstart = () => {
-      const panel = document.querySelector('.voice-hero-panel');
-      if (panel) panel.classList.add('responding');
+      const avatar = document.getElementById('bot-avatar-container');
+      if (avatar) avatar.classList.add('responding');
     };
 
     appState.activeSpeech.onend = () => {
       dom.audioFeedback.classList.remove('active');
-      const panel = document.querySelector('.voice-hero-panel');
-      if (panel) panel.classList.remove('responding');
+      const avatar = document.getElementById('bot-avatar-container');
+      if (avatar) avatar.classList.remove('responding');
     };
 
     appState.activeSpeech.onerror = () => {
       dom.audioFeedback.classList.remove('active');
-      const panel = document.querySelector('.voice-hero-panel');
-      if (panel) panel.classList.remove('responding');
+      const avatar = document.getElementById('bot-avatar-container');
+      if (avatar) avatar.classList.remove('responding');
     };
 
     window.speechSynthesis.speak(appState.activeSpeech);
     
     // Make sure responding starts immediately
-    const panel = document.querySelector('.voice-hero-panel');
-    if (panel) panel.classList.add('responding');
+    const avatar = document.getElementById('bot-avatar-container');
+    if (avatar) avatar.classList.add('responding');
   } else {
     // Simulated speech timeout for browsers without TTS support
-    const panel = document.querySelector('.voice-hero-panel');
-    if (panel) panel.classList.add('responding');
+    const avatar = document.getElementById('bot-avatar-container');
+    if (avatar) avatar.classList.add('responding');
     setTimeout(() => {
       dom.audioFeedback.classList.remove('active');
-      if (panel) panel.classList.remove('responding');
+      if (avatar) avatar.classList.remove('responding');
     }, 4000);
   }
 }
@@ -466,8 +466,8 @@ function stopTTS() {
     window.speechSynthesis.cancel();
   }
   dom.audioFeedback.classList.remove('active');
-  const panel = document.querySelector('.voice-hero-panel');
-  if (panel) panel.classList.remove('responding');
+  const avatar = document.getElementById('bot-avatar-container');
+  if (avatar) avatar.classList.remove('responding');
 }
 
 // Get text content of active screen to read out loud
@@ -1195,7 +1195,7 @@ function renderVoiceSuggestions() {
 
   questions.forEach(q => {
     const chip = document.createElement('button');
-    chip.className = 'voice-chip-btn';
+    chip.className = 'voice-suggestion-chip';
     chip.textContent = q.text;
     chip.addEventListener('click', () => {
       triggerVoiceExchange(q.text, q.ans);
@@ -1211,12 +1211,9 @@ function startListening() {
   
   const dict = translations[appState.currentLanguage];
   
-  // Update greeting bubble with listening message
-  if (dom.voiceGreeting) {
-    dom.voiceGreeting.innerHTML = `<span>🎙️ ${dict.listening}</span>`;
-    dom.voiceGreeting.classList.add('bubble-flash');
-    setTimeout(() => dom.voiceGreeting.classList.remove('bubble-flash'), 600);
-  }
+  // Add temporary listening message
+  addChatBubble(dict.listening, 'bot');
+  speakText(dict.listening);
 
   // Auto input a mock question after 2.5 seconds
   setTimeout(() => {
@@ -1243,13 +1240,12 @@ function stopListening() {
 }
 
 function addChatBubble(text, sender) {
-  // Update the greeting bubble text with the latest message
-  if (dom.voiceGreeting) {
-    dom.voiceGreeting.innerHTML = `<span>${sender === 'user' ? '🙂' : '🤖'} ${text}</span>`;
-    // Add a brief highlight animation
-    dom.voiceGreeting.classList.add('bubble-flash');
-    setTimeout(() => dom.voiceGreeting.classList.remove('bubble-flash'), 600);
-  }
+  const bubble = document.createElement('div');
+  bubble.className = `chat-bubble ${sender}`;
+  bubble.textContent = text;
+  
+  dom.voiceChat.appendChild(bubble);
+  dom.voiceChat.scrollTop = dom.voiceChat.scrollHeight; // Scroll to bottom
 }
 
 function triggerVoiceExchange(question, answer) {
