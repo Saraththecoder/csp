@@ -70,7 +70,7 @@ body {
 /* App Header */
 .app-header {
   background: #ffffff;
-  padding: 12px 16px;
+  padding: 10px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -84,55 +84,89 @@ body {
   flex-direction: column;
 }
 
-.app-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--blue-primary);
+.brand-row {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
+.app-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #202124;
+}
+
 .header-logo {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   object-fit: contain;
-  border-radius: 6px;
+  background: var(--blue-light);
+  padding: 4px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(26, 115, 232, 0.12);
 }
 
 .village-indicator {
-  font-size: 13px;
-  color: #666;
-  font-weight: 500;
+  font-size: 10.5px;
+  color: #5f6368;
+  font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 4px;
-  margin-top: 2px;
+  gap: 6px;
+  margin-top: 5px;
+  background: #f1f3f4;
+  padding: 3px 8px;
+  border-radius: 12px;
+  width: fit-content;
+  border: 1px solid #eef0f2;
+}
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--green-safe);
+  border-radius: 50%;
+  display: inline-block;
+  animation: pulseGlow 2s infinite;
+}
+
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0 0 rgba(46, 125, 50, 0.7); }
+  70% { box-shadow: 0 0 0 6px rgba(46, 125, 50, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(46, 125, 50, 0); }
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .language-switcher {
   display: flex;
-  gap: 4px;
+  gap: 2px;
   background: #f1f3f4;
-  padding: 4px;
+  padding: 3px;
   border-radius: 20px;
+  border: 1px solid #e0e2e5;
 }
 
 .lang-btn {
   border: none;
   background: transparent;
-  padding: 6px 10px;
+  padding: 5px 9px;
   border-radius: 16px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   cursor: pointer;
   color: #5f6368;
-  transition: all 0.2s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .lang-btn.active {
-  background: var(--blue-primary);
-  color: #ffffff;
+  background: #ffffff;
+  color: var(--blue-primary);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 /* Audio helper widget (Floating speaker text-to-speech) */
@@ -140,15 +174,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #e8f0fe;
+  background: var(--blue-light);
   color: var(--blue-primary);
   border: none;
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 2px 6px rgba(26, 115, 232, 0.2);
+  box-shadow: 0 2px 6px rgba(26, 115, 232, 0.1);
 }
 
 .audio-helper-btn:active {
