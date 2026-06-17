@@ -427,19 +427,35 @@ function speakText(text) {
 
     appState.activeSpeech.rate = 0.9; // speak slightly slower for clarity
     
+    appState.activeSpeech.onstart = () => {
+      const avatar = document.getElementById('bot-avatar-container');
+      if (avatar) avatar.classList.add('responding');
+    };
+
     appState.activeSpeech.onend = () => {
       dom.audioFeedback.classList.remove('active');
+      const avatar = document.getElementById('bot-avatar-container');
+      if (avatar) avatar.classList.remove('responding');
     };
 
     appState.activeSpeech.onerror = () => {
       dom.audioFeedback.classList.remove('active');
+      const avatar = document.getElementById('bot-avatar-container');
+      if (avatar) avatar.classList.remove('responding');
     };
 
     window.speechSynthesis.speak(appState.activeSpeech);
+    
+    // Make sure responding starts immediately
+    const avatar = document.getElementById('bot-avatar-container');
+    if (avatar) avatar.classList.add('responding');
   } else {
     // Simulated speech timeout for browsers without TTS support
+    const avatar = document.getElementById('bot-avatar-container');
+    if (avatar) avatar.classList.add('responding');
     setTimeout(() => {
       dom.audioFeedback.classList.remove('active');
+      if (avatar) avatar.classList.remove('responding');
     }, 4000);
   }
 }
@@ -450,6 +466,8 @@ function stopTTS() {
     window.speechSynthesis.cancel();
   }
   dom.audioFeedback.classList.remove('active');
+  const avatar = document.getElementById('bot-avatar-container');
+  if (avatar) avatar.classList.remove('responding');
 }
 
 // Get text content of active screen to read out loud
