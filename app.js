@@ -57,9 +57,6 @@ const dom = {
   detailStatus: document.getElementById('detail-status'),
   detailTrust: document.getElementById('detail-trust'),
   detailComplaints: document.getElementById('detail-complaints'),
-  navStatusCard: document.getElementById('map-navigation-card'),
-  navStatusText: document.getElementById('nav-status-text'),
-  navStatusProgress: document.getElementById('map-navigation-progress'),
   
   // Finder Screen
   finderContainer: document.getElementById('finder-items-list'),
@@ -327,6 +324,12 @@ window.navigateTo = function(screenId) {
   }
   if (screenId === 'asha') {
     updateAshaScreenVals();
+  }
+
+  // Clear routing lines if navigating away from map screen
+  if (screenId !== 'map' && map && activeRoutePolyline) {
+    map.removeLayer(activeRoutePolyline);
+    activeRoutePolyline = null;
   }
 
   // Stop any reading TTS from previous screen
@@ -913,37 +916,29 @@ function renderFinderList() {
   });
 }
 
-// Simulate walk-direction loader (draw path and progress bar)
+// Map route path loader (draw path only)
 let activeRoutePolyline = null;
 
 window.startSimulatingDirections = function(sourceId) {
   // Navigate to map screen
   navigateTo('map');
 
-  const s = appState.sources[sourceId];
-  const dict = translations[appState.currentLanguage];
-  const name = dict[s.nameKey] || s.nameKey;
+  // Highlight the target source card detail
+  selectMapSource(sourceId);
 
-  // Hide detail card, show navigation card
-  if (dom.detailCard) dom.detailCard.classList.remove('active');
-  if (dom.navStatusCard) dom.navStatusCard.style.display = 'block';
-  if (dom.navStatusText) dom.navStatusText.textContent = `${dict.simulatingDirections || 'Showing route to'} ${name}...`;
-  if (dom.navStatusProgress) dom.navStatusProgress.style.width = '0%';
+  const startCoords = appState.userCoords || [17.4483, 78.3488];
+  const endCoords = markers[sourceId] ? markers[sourceId].coords : startCoords;
 
   // Clear any existing active route layers
   if (map && activeRoutePolyline) {
     map.removeLayer(activeRoutePolyline);
   }
 
-  // Coordinates
-  const startCoords = appState.userCoords || [17.4483, 78.3488];
-  const endCoords = markers[sourceId] ? markers[sourceId].coords : startCoords;
-
   // Draw path polyline
   activeRoutePolyline = L.polyline([startCoords, endCoords], {
     color: 'var(--blue-primary)',
     weight: 5,
-    opacity: 0.7,
+    opacity: 0.8,
     dashArray: '10, 10',
     lineCap: 'round'
   }).addTo(map);
@@ -951,45 +946,6 @@ window.startSimulatingDirections = function(sourceId) {
   // Pan map to bounds to view entire route
   const bounds = L.latLngBounds([startCoords, endCoords]);
   map.fitBounds(bounds, { padding: [50, 50] });
-
-  // Progress Bar / Walk simulation
-  let startTime = null;
-  const duration = 3000; // 3 seconds simulation
-
-  function animateRoute(timestamp) {
-    if (!startTime) startTime = timestamp;
-    const elapsed = timestamp - startTime;
-    const progress = Math.min(1, elapsed / duration);
-
-    // Update progress bar width
-    if (dom.navStatusProgress) dom.navStatusProgress.style.width = `${progress * 100}%`;
-
-    if (progress < 1) {
-      requestAnimationFrame(animateRoute);
-    } else {
-      // Arrived!
-      if (dom.navStatusText) dom.navStatusText.textContent = `${dict.arrived || 'Arrived at'} ${name}!`;
-      speakText(`${dict.arrived || 'You have arrived at the source!'} ${name}`);
-
-      // Highlight the target source card detail
-      selectMapSource(sourceId);
-
-      // Clean up path layers after 2.5 seconds
-      setTimeout(() => {
-        if (map && activeRoutePolyline) {
-          map.removeLayer(activeRoutePolyline);
-          activeRoutePolyline = null;
-        }
-        if (dom.navStatusCard) dom.navStatusCard.style.display = 'none';
-        if (dom.detailCard) dom.detailCard.classList.add('active');
-      }, 2500);
-    }
-  }
-
-  // Delay starting animation slightly for transition ease
-  setTimeout(() => {
-    requestAnimationFrame(animateRoute);
-  }, 300);
 };
 
 // Screen 6: ASHA Worker Dashboard
