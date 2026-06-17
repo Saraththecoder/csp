@@ -913,9 +913,8 @@ function renderFinderList() {
   });
 }
 
-// Simulate walk-direction loader
+// Simulate walk-direction loader (draw path and progress bar)
 let activeRoutePolyline = null;
-let activeRouteAnimatorMarker = null;
 
 window.startSimulatingDirections = function(sourceId) {
   // Navigate to map screen
@@ -932,9 +931,8 @@ window.startSimulatingDirections = function(sourceId) {
   if (dom.navStatusProgress) dom.navStatusProgress.style.width = '0%';
 
   // Clear any existing active route layers
-  if (map) {
-    if (activeRoutePolyline) map.removeLayer(activeRoutePolyline);
-    if (activeRouteAnimatorMarker) map.removeLayer(activeRouteAnimatorMarker);
+  if (map && activeRoutePolyline) {
+    map.removeLayer(activeRoutePolyline);
   }
 
   // Coordinates
@@ -950,39 +948,21 @@ window.startSimulatingDirections = function(sourceId) {
     lineCap: 'round'
   }).addTo(map);
 
-  // Draw moving animator marker
-  activeRouteAnimatorMarker = L.marker(startCoords, {
-    icon: L.divIcon({
-      html: '<div class="user-location-marker" style="font-size: 16px;">🚶‍♂️</div>',
-      className: 'user-icon',
-      iconSize: [32, 32],
-      iconAnchor: [16, 16]
-    })
-  }).addTo(map);
-
   // Pan map to bounds to view entire route
   const bounds = L.latLngBounds([startCoords, endCoords]);
   map.fitBounds(bounds, { padding: [50, 50] });
 
-  // Animation loop
+  // Progress Bar / Walk simulation
   let startTime = null;
-  const duration = 3000; // 3 seconds route walk simulation
+  const duration = 3000; // 3 seconds simulation
 
   function animateRoute(timestamp) {
     if (!startTime) startTime = timestamp;
     const elapsed = timestamp - startTime;
     const progress = Math.min(1, elapsed / duration);
 
-    // Update progress bar
+    // Update progress bar width
     if (dom.navStatusProgress) dom.navStatusProgress.style.width = `${progress * 100}%`;
-
-    // Interpolate lat/lng
-    const currentLat = startCoords[0] + (endCoords[0] - startCoords[0]) * progress;
-    const currentLng = startCoords[1] + (endCoords[1] - startCoords[1]) * progress;
-    
-    if (activeRouteAnimatorMarker) {
-      activeRouteAnimatorMarker.setLatLng([currentLat, currentLng]);
-    }
 
     if (progress < 1) {
       requestAnimationFrame(animateRoute);
@@ -996,9 +976,9 @@ window.startSimulatingDirections = function(sourceId) {
 
       // Clean up path layers after 2.5 seconds
       setTimeout(() => {
-        if (map) {
-          if (activeRoutePolyline) map.removeLayer(activeRoutePolyline);
-          if (activeRouteAnimatorMarker) map.removeLayer(activeRouteAnimatorMarker);
+        if (map && activeRoutePolyline) {
+          map.removeLayer(activeRoutePolyline);
+          activeRoutePolyline = null;
         }
         if (dom.navStatusCard) dom.navStatusCard.style.display = 'none';
         if (dom.detailCard) dom.detailCard.classList.add('active');
