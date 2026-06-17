@@ -81,6 +81,7 @@ const dom = {
   storyTitle: document.getElementById('story-card-title'),
   storyText: document.getElementById('story-card-text'),
   storyArt: document.getElementById('story-card-art'),
+  storyAudioBtn: document.getElementById('story-audio-btn'),
   storyPrevBtn: document.getElementById('story-prev'),
   storyNextBtn: document.getElementById('story-next'),
 
@@ -436,12 +437,14 @@ function speakText(text) {
       dom.audioFeedback.classList.remove('active');
       const avatar = document.getElementById('bot-avatar-container');
       if (avatar) avatar.classList.remove('responding');
+      if (dom.storyAudioBtn) dom.storyAudioBtn.classList.remove('playing');
     };
 
     appState.activeSpeech.onerror = () => {
       dom.audioFeedback.classList.remove('active');
       const avatar = document.getElementById('bot-avatar-container');
       if (avatar) avatar.classList.remove('responding');
+      if (dom.storyAudioBtn) dom.storyAudioBtn.classList.remove('playing');
     };
 
     window.speechSynthesis.speak(appState.activeSpeech);
@@ -456,6 +459,7 @@ function speakText(text) {
     setTimeout(() => {
       dom.audioFeedback.classList.remove('active');
       if (avatar) avatar.classList.remove('responding');
+      if (dom.storyAudioBtn) dom.storyAudioBtn.classList.remove('playing');
     }, 4000);
   }
 }
@@ -468,6 +472,7 @@ function stopTTS() {
   dom.audioFeedback.classList.remove('active');
   const avatar = document.getElementById('bot-avatar-container');
   if (avatar) avatar.classList.remove('responding');
+  if (dom.storyAudioBtn) dom.storyAudioBtn.classList.remove('playing');
 }
 
 // Get text content of active screen to read out loud
@@ -1141,17 +1146,30 @@ const storiesData = [
 function setupStoriesScreen() {
   dom.storyPrevBtn.addEventListener('click', () => {
     if (appState.currentStoryIndex > 0) {
+      stopTTS();
       appState.currentStoryIndex--;
       renderStory();
     }
   });
 
   dom.storyNextBtn.addEventListener('click', () => {
+    stopTTS();
     if (appState.currentStoryIndex === storiesData.length - 1) {
       navigateTo('home');
     } else if (appState.currentStoryIndex < storiesData.length - 1) {
       appState.currentStoryIndex++;
       renderStory();
+    }
+  });
+
+  dom.storyAudioBtn.addEventListener('click', () => {
+    const activeStory = getActiveStoryData();
+    if (appState.activeSpeech) {
+      stopTTS();
+      dom.storyAudioBtn.classList.remove('playing');
+    } else {
+      dom.storyAudioBtn.classList.add('playing');
+      speakText(activeStory.text);
     }
   });
 }
@@ -1174,6 +1192,9 @@ function renderStory() {
 
   dom.storyTitle.textContent = activeStory.title;
   dom.storyText.textContent = activeStory.text;
+  
+  // Reset audio button state on render
+  dom.storyAudioBtn.classList.remove('playing');
   
   // Render high-quality generated village illustration
   dom.storyArt.innerHTML = `<img src="./story${appState.currentStoryIndex + 1}.png" class="story-art-img" alt="${activeStory.title}">`;
