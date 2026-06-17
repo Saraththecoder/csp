@@ -474,77 +474,41 @@ body {
   justify-content: space-between;
 }
 
-.feed-card {
+.feed-item {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 14px 16px;
-  background: linear-gradient(135deg, #ffffff 0%, #f9f9fb 100%);
-  border-radius: 16px;
-  border: 1px solid #eef0f3;
-  margin-bottom: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.01);
-  transition: all 0.25s ease;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
-.feed-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.03);
-  border-color: rgba(26, 115, 232, 0.15);
+.feed-icon {
+  font-size: 24px;
+  margin-right: 12px;
 }
 
-.feed-card.safe { border-left: 4.5px solid var(--green-safe); }
-.feed-card.careful { border-left: 4.5px solid var(--orange-warning); }
-.feed-card.risk { border-left: 4.5px solid var(--red-danger); }
-
-.feed-status-badge-mini {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 15px;
-  flex-shrink: 0;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-}
-
-.feed-status-badge-mini.safe { background: var(--green-light); }
-.feed-status-badge-mini.careful { background: var(--orange-light); }
-.feed-status-badge-mini.risk { background: var(--red-light); }
-
-.feed-details {
+.feed-content {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
 }
 
-.feed-row-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.feed-source-name {
+.feed-title {
   font-size: 14px;
   font-weight: 700;
   color: #202124;
-}
-
-.feed-time-badge {
-  font-size: 10px;
-  font-weight: 700;
-  color: #5f6368;
-  background: #f1f3f4;
-  padding: 3px 8px;
-  border-radius: 10px;
+  margin-bottom: 2px;
 }
 
 .feed-desc {
-  font-size: 13px;
+  font-size: 12px;
   color: #5f6368;
-  line-height: 1.3;
+}
+
+.feed-time {
+  font-size: 11px;
+  color: #80868b;
+  font-weight: 500;
 }
 
 /* Screen 2: Report grid */

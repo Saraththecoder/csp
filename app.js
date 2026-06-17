@@ -607,7 +607,7 @@ function updateFeedUI() {
     const descText = dict[item.textKey] || item.textKey;
 
     const li = document.createElement('div');
-    li.className = `feed-card ${item.status}`;
+    li.className = 'feed-item';
     
     // Choose mini status icon symbol
     let statusIcon = '🟢';
@@ -615,14 +615,12 @@ function updateFeedUI() {
     else if (item.status === 'risk') statusIcon = '🚨';
 
     li.innerHTML = `
-      <div class="feed-status-badge-mini ${item.status}">${statusIcon}</div>
-      <div class="feed-details">
-        <div class="feed-row-top">
-          <span class="feed-source-name">${sourceName}</span>
-          <span class="feed-time-badge">${item.time} ${dict.ago}</span>
-        </div>
-        <p class="feed-desc">${descText}</p>
+      <div class="feed-icon">${statusIcon}</div>
+      <div class="feed-content">
+        <div class="feed-title">${sourceName}</div>
+        <div class="feed-desc">${descText}</div>
       </div>
+      <div class="feed-time">${item.time} ${dict.ago}</div>
     `;
     dom.homeFeedList.appendChild(li);
   });
