@@ -127,6 +127,18 @@ window.addEventListener('DOMContentLoaded', () => {
   navigateTo('home');
   updateGlobalWaterUI();
   updateFeedUI();
+
+  // Hide splash screen after logo animation completes
+  setTimeout(() => {
+    const splash = document.getElementById('splash-screen');
+    if (splash) {
+      splash.classList.add('fade-out');
+      // Fully hide layout after opacity transition ends
+      setTimeout(() => {
+        splash.style.display = 'none';
+      }, 500);
+    }
+  }, 2600); // 2.6 seconds allows animations to play fully
 });
 
 // Navigation Controller (Hub and Spoke)

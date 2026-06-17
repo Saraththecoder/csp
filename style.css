@@ -1229,3 +1229,92 @@ body {
     border: none; /* Remove borders on mobile screens */
   }
 }
+
+/* ==================== SPLASH SCREEN LOGO ANIMATION ==================== */
+.splash-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #ffffff;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.splash-screen.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.splash-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+}
+
+.splash-logo {
+  width: 110px;
+  height: 110px;
+  margin-bottom: 24px;
+  object-fit: contain;
+  opacity: 0;
+  animation: logoIntro 1.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.splash-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--blue-primary);
+  margin-bottom: 6px;
+  opacity: 0;
+  animation: fadeInUp 1s cubic-bezier(0.19, 1, 0.22, 1) 0.5s forwards;
+}
+
+.splash-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--blue-light);
+  border-top-color: var(--blue-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite, fadeInUp 1s cubic-bezier(0.19, 1, 0.22, 1) 0.8s forwards;
+  opacity: 0;
+}
+
+/* Keyframes */
+@keyframes logoIntro {
+  0% {
+    transform: scale(0.3) rotate(-10deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15) rotate(3deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
