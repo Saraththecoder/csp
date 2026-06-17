@@ -9,8 +9,8 @@
   <!-- Leaflet Map CDNs -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script type="module" crossorigin src="./assets/index-Dmqxb4fN.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-C-nt5eIP.css">
+  <script type="module" crossorigin src="./assets/index-DEzcLrX9.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-CMsG9BCS.css">
 </head>
 <body>
 
@@ -180,7 +180,17 @@
                 <line x1="8" y1="12" x2="16" y2="12"/>
               </svg>
             </div>
-            <div class="shortcut-label" data-i18n="menuAsha">ASHA Dashboard</div>
+            <div class="shortcut-label" data-i18n="menuAsha">ASHA Health Portal</div>
+          </div>
+
+          <!-- Spoke 9: Officers Directory -->
+          <div class="menu-shortcut-card officers" onclick="navigateTo('officers')">
+            <div class="shortcut-icon">
+              <svg class="tool-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+            </div>
+            <div class="shortcut-label" data-i18n="officersDirectory">Officers Directory</div>
           </div>
         </div>
 
@@ -474,6 +484,24 @@
             <div class="wave-bar"></div>
             <div class="wave-bar"></div>
           </div>
+        </div>
+
+        <!-- Exit back to Hub -->
+        <button class="back-home-btn" data-i18n="goBackHome" onclick="navigateTo('home')">🏠 Go Back to Home Screen</button>
+      </section>
+
+      <!-- ==================== SCREEN 11: OFFICERS DIRECTORY ==================== -->
+      <section class="screen" id="officers-screen">
+        <h2 class="section-title" data-i18n="officersDirectory">Officers Directory</h2>
+        
+        <div class="officers-tabs">
+          <button class="officers-tab active" data-tab="area" data-i18n="areaOfficers">Area / Community</button>
+          <button class="officers-tab" data-tab="city" data-i18n="cityOfficers">City Officers</button>
+          <button class="officers-tab" data-tab="district" data-i18n="districtOfficers">District Officers</button>
+        </div>
+
+        <div class="officers-list" id="officers-list">
+          <!-- Populated by JS -->
         </div>
 
         <!-- Exit back to Hub -->
