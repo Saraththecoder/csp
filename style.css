@@ -1311,56 +1311,62 @@ body {
   border-color: rgba(20, 160, 160, 0.38);
 }
 
-/* Bot image container */
+/* Bot image container — sits on top of rings in the panel */
 .voice-bot-container {
-  position: relative;
-  width: 200px;
-  height: 220px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  z-index: 5;
-}
-
-/* Bot image — full bleed, not circular, like reference */
-.voice-bot-img {
-  width: 200px;
-  height: 220px;
-  object-fit: contain;
-  object-position: bottom;
-  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.18));
-  z-index: 5;
-  transition: transform 0.2s ease;
-}
-
-/* Ripple waves behind bot — sit below the image */
-.voice-bot-container .bot-wave-ring {
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 130px;
-  height: 130px;
-  border-radius: 50%;
-  background-color: rgba(0, 150, 150, 0.2);
-  z-index: 1;
-  opacity: 0;
+  width: 210px;
+  height: 240px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 20;
 }
 
-/* Responding State */
-.voice-bot-container.responding .voice-bot-img {
+/* Bot image — transparent background, no border/clip */
+.voice-bot-img {
+  width: 210px;
+  height: 240px;
+  object-fit: contain;
+  object-position: bottom;
+  filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.15));
+  position: relative;
+  z-index: 20;
+  transition: transform 0.2s ease;
+}
+
+/* Ripple wave rings — absolutely centered in the panel, BELOW the bot */
+.bot-wave-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(0, 160, 150, 0.5);
+  background: transparent;
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Responding State — waves triggered from panel parent */
+.voice-hero-panel.responding .voice-bot-img {
   animation: botVibrate 0.15s infinite linear;
 }
-.voice-bot-container.responding .ring1 {
-  animation: botWaves 2s infinite ease-out;
+.voice-hero-panel.responding .ring1 {
+  animation: botWaves 2.4s infinite ease-out;
 }
-.voice-bot-container.responding .ring2 {
-  animation: botWaves 2s infinite ease-out;
-  animation-delay: 0.6s;
+.voice-hero-panel.responding .ring2 {
+  animation: botWaves 2.4s infinite ease-out;
+  animation-delay: 0.8s;
 }
-.voice-bot-container.responding .ring3 {
-  animation: botWaves 2s infinite ease-out;
-  animation-delay: 1.2s;
+.voice-hero-panel.responding .ring3 {
+  animation: botWaves 2.4s infinite ease-out;
+  animation-delay: 1.6s;
 }
 
 /* Greeting speech bubble */
@@ -1471,6 +1477,28 @@ body {
   0% { box-shadow: 0 0 0 0 rgba(198, 40, 40, 0.7); }
   70% { box-shadow: 0 0 0 15px rgba(198, 40, 40, 0); }
   100% { box-shadow: 0 0 0 0 rgba(198, 40, 40, 0); }
+}
+
+/* Bot wave ring expand-fade animation */
+@keyframes botWaves {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.8);
+    opacity: 0;
+  }
+}
+
+/* Bot image vibration when speaking */
+@keyframes botVibrate {
+  0%   { transform: translate(0, 0) rotate(0); }
+  20%  { transform: translate(-1.5px, 0.5px) rotate(-0.3deg); }
+  40%  { transform: translate(1.5px, -0.5px) rotate(0.3deg); }
+  60%  { transform: translate(-1px, 1px) rotate(-0.2deg); }
+  80%  { transform: translate(1px, -1px) rotate(0.2deg); }
+  100% { transform: translate(0, 0) rotate(0); }
 }
 
 .audio-wave {

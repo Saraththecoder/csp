@@ -431,17 +431,18 @@
 
         <!-- Hero Avatar Panel -->
         <div class="voice-hero-panel">
-          <!-- Concentric static ring layers -->
+          <!-- Static concentric decorative rings (always visible) -->
           <div class="voice-ring voice-ring-outer"></div>
           <div class="voice-ring voice-ring-mid"></div>
           <div class="voice-ring voice-ring-inner"></div>
 
-          <!-- Bot image container (animated when responding) -->
+          <!-- Pulsing ripple rings (visible only when responding) - BEHIND bot -->
+          <div class="bot-wave-ring ring1" id="wave-ring-1"></div>
+          <div class="bot-wave-ring ring2" id="wave-ring-2"></div>
+          <div class="bot-wave-ring ring3" id="wave-ring-3"></div>
+
+          <!-- Bot image — on top of everything in the panel -->
           <div class="voice-bot-container" id="bot-avatar-container">
-            <!-- 3 pulsing ripple rings -->
-            <div class="bot-wave-ring ring1"></div>
-            <div class="bot-wave-ring ring2"></div>
-            <div class="bot-wave-ring ring3"></div>
             <img src="bot.png" alt="JalRakshak Bot" class="voice-bot-img" id="bot-avatar">
           </div>
         </div>
