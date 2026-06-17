@@ -128,6 +128,20 @@ function mergeState(apiData) {
   }
 }
 
+// Helper: Refresh all UI components based on the latest state
+function refreshAllUI() {
+  updateGlobalWaterUI();
+  updateFeedUI();
+  updateAshaScreenVals();
+  updateMapMarkers();
+  if (appState.currentScreen === 'finder') {
+    renderFinderList();
+  }
+  if (appState.currentScreen === 'reputation') {
+    renderReputationList();
+  }
+}
+
 // API: Fetch state from backend
 async function fetchState() {
   try {
@@ -135,6 +149,7 @@ async function fetchState() {
     if (!res.ok) throw new Error('Failed to fetch state');
     const apiData = await res.json();
     mergeState(apiData);
+    refreshAllUI();
   } catch (err) {
     console.error('Error fetching state:', err);
   }
@@ -156,6 +171,7 @@ async function sendReportAction(problems, targetSource) {
     if (!res.ok) throw new Error('Report submission failed');
     const data = await res.json();
     mergeState(data.state);
+    refreshAllUI();
   } catch (err) {
     console.error('Error submitting report:', err);
   }
@@ -177,6 +193,7 @@ async function sendSicknessAction(type, count) {
     if (!res.ok) throw new Error('Sickness log failed');
     const data = await res.json();
     mergeState(data.state);
+    refreshAllUI();
   } catch (err) {
     console.error('Error logging sickness case:', err);
   }
@@ -195,6 +212,7 @@ async function resetAPIState() {
     if (!res.ok) throw new Error('Reset failed');
     const data = await res.json();
     mergeState(data.state);
+    refreshAllUI();
   } catch (err) {
     console.error('Error resetting state:', err);
   }
