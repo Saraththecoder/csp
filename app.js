@@ -787,7 +787,9 @@ function setupStoriesScreen() {
   });
 
   dom.storyNextBtn.addEventListener('click', () => {
-    if (appState.currentStoryIndex < storiesData.length - 1) {
+    if (appState.currentStoryIndex === storiesData.length - 1) {
+      navigateTo('home');
+    } else if (appState.currentStoryIndex < storiesData.length - 1) {
       appState.currentStoryIndex++;
       renderStory();
     }
@@ -818,16 +820,6 @@ function renderStory() {
   // Enable/disable buttons
   dom.storyPrevBtn.style.visibility = appState.currentStoryIndex === 0 ? 'hidden' : 'visible';
   dom.storyNextBtn.textContent = appState.currentStoryIndex === storiesData.length - 1 ? dict.home : dict.nextStory;
-  
-  // Handle final button tap
-  dom.storyNextBtn.onclick = () => {
-    if (appState.currentStoryIndex === storiesData.length - 1) {
-      navigateTo('home');
-    } else {
-      appState.currentStoryIndex++;
-      renderStory();
-    }
-  };
 }
 
 // Screen 9: Voice Assistant UI
