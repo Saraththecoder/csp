@@ -132,7 +132,14 @@ export const translations = {
     findSafeWaterBtn: "Find Safe Water Now",
     closeAlert: "Dismiss Alert",
     
-    speakingText: "Speaking: "
+    speakingText: "Speaking: ",
+    
+    // Screen 11: Officers
+    officersDirectory: "Officers Directory",
+    areaOfficers: "Area / Community",
+    cityOfficers: "City Officers",
+    districtOfficers: "District Officers",
+    callBtn: "Call"
   },
   hi: {
     appName: "जलरक्षक",
@@ -259,7 +266,14 @@ export const translations = {
     findSafeWaterBtn: "तुरंत साफ पानी खोजें",
     closeAlert: "चेतावनी हटाएं",
     
-    speakingText: "आवाज: "
+    speakingText: "बोल रहे हैं: ",
+    
+    // Screen 11: Officers
+    officersDirectory: "अधिकारी निर्देशिका",
+    areaOfficers: "क्षेत्र / समुदाय",
+    cityOfficers: "शहर के अधिकारी",
+    districtOfficers: "जिला अधिकारी",
+    callBtn: "कॉल करें"
   },
   te: {
     appName: "జలరక్షక్",
@@ -386,6 +400,13 @@ export const translations = {
     findSafeWaterBtn: "సురక్షిత నీరు ఇప్పుడే వెతకండి",
     closeAlert: "హెచ్చరిక మూసివేయి",
     
-    speakingText: "వాయిస్: "
+    speakingText: "మాట్లాడుతున్నారు: ",
+    
+    // Screen 11: Officers
+    officersDirectory: "అధికారుల డైరెక్టరీ",
+    areaOfficers: "ప్రాంతం / సంఘం",
+    cityOfficers: "నగర అధికారులు",
+    districtOfficers: "జిల్లా అధికారులు",
+    callBtn: "కాల్ చేయండి"
   }
 };

@@ -1658,3 +1658,93 @@ body {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* ==================== SCREEN 11: OFFICERS DIRECTORY ==================== */
+.officers-tabs {
+  display: flex;
+  background: #f1f3f4;
+  padding: 4px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  gap: 4px;
+}
+
+.officers-tab {
+  flex: 1;
+  padding: 10px 4px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #5f6368;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.officers-tab.active {
+  background: #ffffff;
+  color: var(--blue-primary);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.officers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.officer-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  border: 1px solid #f1f3f4;
+}
+
+.officer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.officer-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #202124;
+}
+
+.officer-role {
+  font-size: 13px;
+  color: #5f6368;
+}
+
+.officer-phone {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--blue-primary);
+  margin-top: 4px;
+}
+
+.officer-call-btn {
+  background: var(--green-safe);
+  color: white;
+  text-decoration: none;
+  padding: 10px 16px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.officer-call-btn:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}

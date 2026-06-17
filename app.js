@@ -96,6 +96,10 @@ const dom = {
   emergencyClose: document.getElementById('emergency-close'),
   emergencyFinderBtn: document.getElementById('emergency-finder-btn'),
 
+  // Officers Directory
+  officersTabs: document.querySelectorAll('.officers-tab'),
+  officersList: document.getElementById('officers-list'),
+
   // Audio playing feedback
   audioFeedback: document.getElementById('audio-feedback-banner'),
   audioFeedbackText: document.getElementById('audio-feedback-text'),
@@ -259,6 +263,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   setupStoriesScreen();
   setupVoiceScreen();
   setupEmergencyAlert();
+  setupOfficersScreen();
   
   // Load initial backend database state
   await fetchState();
@@ -268,6 +273,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   navigateTo('home');
   updateGlobalWaterUI();
   updateFeedUI();
+  renderOfficersList('area');
 
   // Hide splash screen after logo animation completes
   setTimeout(() => {
@@ -1340,6 +1346,60 @@ function dismissEmergencyAlert() {
     appState.globalWaterStatus = 'careful';
     updateGlobalWaterUI();
   }
+}
+
+// Screen 11: Officers Directory
+const officersData = {
+  area: [
+    { name: 'Sunita Devi (ASHA)', role: 'Community Health Worker', phone: '+91 98765 43210' },
+    { name: 'Ramesh Kumar', role: 'Panchayat Water Secretary', phone: '+91 98765 43211' }
+  ],
+  city: [
+    { name: 'Rajesh Verma', role: 'City Water Board Engineer', phone: '+91 98765 43212' },
+    { name: 'Priya Sharma', role: 'Municipal Health Officer', phone: '+91 98765 43213' }
+  ],
+  district: [
+    { name: 'Dr. Anil Gupta', role: 'District Medical Officer', phone: '+91 98765 43214' },
+    { name: 'Sanjay Singh', role: 'District Magistrate Office', phone: '+91 98765 43215' }
+  ]
+};
+
+function setupOfficersScreen() {
+  if (!dom.officersTabs || !dom.officersList) return;
+  
+  dom.officersTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Remove active class from all
+      dom.officersTabs.forEach(t => t.classList.remove('active'));
+      // Add active to clicked
+      tab.classList.add('active');
+      // Render corresponding list
+      const type = tab.getAttribute('data-tab');
+      renderOfficersList(type);
+    });
+  });
+}
+
+function renderOfficersList(type) {
+  if (!dom.officersList) return;
+  dom.officersList.innerHTML = '';
+  
+  const officers = officersData[type] || [];
+  const dict = translations[appState.currentLanguage];
+  
+  officers.forEach(officer => {
+    const card = document.createElement('div');
+    card.className = 'officer-card';
+    card.innerHTML = `
+      <div class="officer-info">
+        <div class="officer-name">${officer.name}</div>
+        <div class="officer-role">${officer.role}</div>
+        <div class="officer-phone">📞 ${officer.phone}</div>
+      </div>
+      <a href="tel:${officer.phone.replace(/[^0-9+]/g, '')}" class="officer-call-btn">${dict.callBtn || 'Call'}</a>
+    `;
+    dom.officersList.appendChild(card);
+  });
 }
 
 // Presentation Demo Tools Helper (Sidebar Controls)
