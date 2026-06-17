@@ -1,3 +1,5 @@
+import { translations } from './translations.js';
+
 // State Management
 const appState = {
   currentLanguage: 'en',
