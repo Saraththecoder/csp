@@ -70,6 +70,7 @@ const dom = {
   ashaDiarrheaVal: document.getElementById('asha-diarrhea-val'),
   ashaVomitingVal: document.getElementById('asha-vomiting-val'),
   ashaFeverVal: document.getElementById('asha-fever-val'),
+  ashaTotalCasesVal: document.getElementById('asha-total-cases-val'),
 
   // Reputation List
   reputationList: document.getElementById('reputation-items-list'),
@@ -206,6 +207,8 @@ function updateAshaScreenVals() {
   if (dom.ashaFeverVal) dom.ashaFeverVal.textContent = appState.sicknessCases.fever;
   
   const total = appState.sicknessCases.diarrhea + appState.sicknessCases.vomiting + appState.sicknessCases.fever;
+  if (dom.ashaTotalCasesVal) dom.ashaTotalCasesVal.textContent = total;
+
   const dict = translations[appState.currentLanguage];
   let riskPercentage = Math.min(100, (total / 10) * 100);
   if (dom.ashaRiskBar) dom.ashaRiskBar.style.width = `${riskPercentage}%`;
